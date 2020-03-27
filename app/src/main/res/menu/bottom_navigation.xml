@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_status"
+        android:icon="@drawable/ic_apps_black_24dp"
+        android:title="Status"
+        />
+
+    <item
+        android:id="@+id/nav_energy"
+        android:icon="@drawable/ic_equalizer_black_24dp"
+        android:title="Energy"
+        />
+
+    <item
+        android:id="@+id/nav_menu"
+        android:icon="@drawable/ic_menu_black_24dp"
+        android:title="Details"
+        />
+
+</menu>

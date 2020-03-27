@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:background="@color/colorPrimary"
+        android:layout_weight="0.3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <TextView
+            android:textSize="24dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="40dp"
+            android:id="@+id/sysname"
+            android:layout_alignParentBottom="true"
+            android:textColor="#fff"
+            android:text="Retrieving system name......"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/sysid"
+            android:layout_alignParentBottom="true"
+            android:textColor="#fff"
+            android:text="Retrieving system ID...."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/menulist"
+        android:layout_weight="0.7"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+</LinearLayout>
