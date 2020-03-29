@@ -1,14 +1,20 @@
 package com.example.solarprototype.Fragments;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -16,9 +22,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.R;
 import com.example.solarprototype.SolarApi;
@@ -37,7 +47,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class StatusFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class StatusFragment extends Fragment {
 
 
     TextView currentdate;
@@ -58,6 +68,28 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
     String returnedvaluestatus,returnedvalueenergyproduced,returnedvalueunitsperkwp;
 
     Boolean valuespresent;
+
+    ColorStateList oldColors;
+
+
+    public static final int REQUEST_CODE = 11;    ///  Used to identify the result
+
+    private OnFragmentInteractionListener mListener;
+
+    public static StatusFragment newInstance() {
+        StatusFragment fragment = new StatusFragment();
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    public StatusFragment()
+    {
+
+    }
 
     public StatusFragment(String status,String energyproducedtoday,String unitsperkwptoday)
     {
@@ -92,21 +124,51 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
     }
 
 
+
+
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR,year);
-        c.set(Calendar.MONTH,month);
-        c.set(Calendar.DAY_OF_MONTH,dayOfMonth);
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String selecteddate = dateFormat.format(calendar.getTime());
-        currentdate.setText("Details for  "+selecteddate);
-        sysstatus.setText("Retrieving system status....");
-        energyproduced.setText("Retrieving details....");
-        unitsperkwp.setText("Retrieving details....");
-        average_power_for_selected_day(getContext(),selecteddate);
-        getdata(getContext());
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // check for the results
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // get date from string
+            String selectedDate = data.getStringExtra("selectedDate");
+            // set the values
+            currentdate.setText("Details for  "+selectedDate);
+            sysstatus.setText("Retrieving system status....");
+            energyproduced.setText("Retrieving details....");
+            unitsperkwp.setText("Retrieving details....");
+            sysstatus.setTextColor(oldColors);
+            energyproduced.setTextColor(oldColors);
+            unitsperkwp.setTextColor(oldColors);
+            average_power_for_selected_day(getContext(),selectedDate);
+            getdata(getContext());
+        }
     }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } /*else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }*/
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+
 
     @Nullable
     @Override
@@ -129,6 +191,10 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
         StoredValues.Todaysdate = dateformat.format(calender.getTime());
         currentdate.setText("Details for  "+date);
 
+        oldColors = energyproduced.getTextColors();
+
+        final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+
         if(valuespresent)
         {
             sysstatus.setText(returnedvaluestatus);
@@ -144,10 +210,14 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
         getdetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentdate.setText("Details for  "+returncurrentdate());
                 Toast.makeText(getContext(),"Updating energy produced today....",Toast.LENGTH_SHORT).show();
                 sysstatus.setText("Retrieving system status....");
                 energyproduced.setText("Retrieving details....");
                 unitsperkwp.setText("Retrieving details....");
+                sysstatus.setTextColor(oldColors);
+                energyproduced.setTextColor(oldColors);
+                unitsperkwp.setTextColor(oldColors);
                 average_power_per_day(getContext());
                 getdata(getContext());
             }
@@ -157,8 +227,11 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
         changedate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment datePicker = new DatePickerFragment();
-                datePicker.show(getFragmentManager(),"Date Picker");
+                AppCompatDialogFragment newFragment = new DatePickerFragment();
+                // set the targetFragment to receive the results, specifying the request code
+                newFragment.setTargetFragment(StatusFragment.this,REQUEST_CODE);
+                // show the datePicker
+                newFragment.show(fm, "datePicker");
             }
         });
 
@@ -178,36 +251,58 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
         summaryOfDay.enqueue(new Callback<SummaryOfDay>() {
             @Override
             public void onResponse(Call<SummaryOfDay> call, Response<SummaryOfDay> response) {
-                SummaryOfDay today = response.body();
 
-                ArrayList<String> datalist = new ArrayList<String>();
+                if(response.body() instanceof SummaryOfDay) {
 
-                Integer k = today.getEnergyToday()/1000;
-                Integer r = today.getEnergyToday()%1000;
-                String value = k+"."+r+" kWh";
-                float avgval = today.getEnergyToday()/49.7f;
-                int ka = (int)avgval/1000;
-                int ra = (int)avgval%1000;
-                String avgvalue = ka+"."+r;
-                datalist.add(/* "Energy produced today is: "+*/ value);
-                datalist.add(/* "Units/kWp is: "+*/ avgvalue);
+                    SummaryOfDay today = response.body();
 
-                energyproduced.setText(datalist.get(datalist.indexOf(value)));
-                StoredValues.energyproducedtoday = datalist.get(datalist.indexOf(value));
-                unitsperkwp.setText(datalist.get(datalist.indexOf(avgvalue)));
-                StoredValues.unitsperkwptoday = datalist.get(datalist.indexOf(avgvalue));
+                    ArrayList<String> datalist = new ArrayList<String>();
 
-                energyproduced.setTextSize(TypedValue.COMPLEX_UNIT_SP,23);
-                energyproduced.setTextColor(Color.parseColor("#000000"));
-                unitsperkwp.setTextSize(TypedValue.COMPLEX_UNIT_SP,23);
-                unitsperkwp.setTextColor(Color.parseColor("#000000"));
+                    Integer k = today.getEnergyToday() / 1000;
+                    Integer r = today.getEnergyToday() % 1000;
+                    String value = k + "." + r + " kWh";
+                    float avgval = today.getEnergyToday() / 49.7f;
+                    int ka = (int) avgval / 1000;
+                    int ra = (int) avgval % 1000;
+                    String avgvalue = ka + "." + r;
+                    datalist.add(/* "Energy produced today is: "+*/ value);
+                    datalist.add(/* "Units/kWp is: "+*/ avgvalue);
 
+                    energyproduced.setText(datalist.get(datalist.indexOf(value)));
+                    StoredValues.energyproducedtoday = datalist.get(datalist.indexOf(value));
+                    unitsperkwp.setText(datalist.get(datalist.indexOf(avgvalue)));
+                    StoredValues.unitsperkwptoday = datalist.get(datalist.indexOf(avgvalue));
+
+                    energyproduced.setTextSize(TypedValue.COMPLEX_UNIT_SP, 23);
+                    energyproduced.setTextColor(Color.parseColor("#000000"));
+                    unitsperkwp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 23);
+                    unitsperkwp.setTextColor(Color.parseColor("#000000"));
+                }
+                else
+                {
+                    sysstatus.setText("System status currently unknown...");
+                    energyproduced.setText("No data....");
+                    unitsperkwp.setText("No data....");
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data does not exist for selected date.....");
+                    dialog.show();
+                    return;
+                }
             }
 
 
             @Override
             public void onFailure(Call<SummaryOfDay> call, Throwable t) {
                 Toast.makeText(context,"Error occured",Toast.LENGTH_SHORT).show();
+                sysstatus.setText("System status currently unknown...");
+                energyproduced.setText("No data....");
+                unitsperkwp.setText("No data....");
+                energyproduced.setTextSize(new Button(getContext()).getTextSize());
+                unitsperkwp.setTextSize(new Button(getContext()).getTextSize());
             }
 
 
@@ -254,6 +349,9 @@ public class StatusFragment extends Fragment implements DatePickerDialog.OnDateS
             @Override
             public void onFailure(Call<SummaryOfDay> call, Throwable t) {
                 Toast.makeText(context,"Error occured",Toast.LENGTH_SHORT).show();
+                sysstatus.setText("System status currently unknown...");
+                energyproduced.setText("No data....");
+                unitsperkwp.setText("No data....");
             }
 
 
