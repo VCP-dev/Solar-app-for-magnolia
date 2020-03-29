@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.WeeklyDetails;
+import com.example.solarprototype.BarChartOperations.monthlydetails;
 import com.example.solarprototype.R;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
 import com.example.solarprototype.SolarApi;
@@ -100,7 +101,16 @@ public class EnergyFragment extends Fragment {
             // get date from string
             String selectedDate = data.getStringExtra("selectedDate");
             // set the values
-            createWeekBarGraph("Weekly analysis",selectedDate);
+            switch(selectweek.getText().toString())
+            {
+                case "Select Desired Week":
+                    createWeekBarGraph("Weekly analysis",selectedDate);
+                    break;
+                case "Select Desired Month":
+                    createMonthBargraph("Monthly analysis",selectedDate);
+                    break;
+            }
+
         }
     }
 
@@ -239,7 +249,7 @@ public class EnergyFragment extends Fragment {
                 selectweek.setVisibility(View.VISIBLE);
                 break;
             case 1:
-                createRandomBarGraph("2020/05/01","2020/06/01","Monthly analysis");
+                //createRandomBarGraph("2020/05/01","2020/06/01","Monthly analysis");
                 selectweek.setText("Select Desired Month");
                 selectweek.setVisibility(View.VISIBLE);
                 break;
@@ -313,6 +323,68 @@ public class EnergyFragment extends Fragment {
             }
         });
     }
+
+
+    public void createMonthBargraph(String description,String date)
+    {
+        barChart.clear();
+        ArrayList<String> selectedMonth = monthlydetails.GetMonthDates(date);
+        String startdate = selectedMonth.get(0);
+        String enddate = selectedMonth.get(selectedMonth.size()-1);
+        getMonthlyValues(getContext(),description,startdate,enddate);
+        Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+    }
+
+    public void getMonthlyValues(final Context context, String description, final String startdate, String enddate)
+    {
+        Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
+        final Call<WeeklyValues> monthlyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
+        final String descr = description;
+
+        monthlyValues.enqueue(new Callback<WeeklyValues>() {
+            @Override
+            public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
+
+                if(response.body() instanceof WeeklyValues) {
+
+                    WeeklyValues values = response.body();
+
+                    ArrayList<String> daysOfMonth = null;
+
+                    daysOfMonth = monthlydetails.GetMonthDates(startdate);
+
+                    barEntries = new ArrayList<>();
+                    List<Integer> valuesofweek = values.getProduction();
+                    for (int j = 0; j < daysOfMonth.size(); j++) {
+                        float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                        barEntries.add(new BarEntry(entryvalue, j));
+                    }
+                    BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
+                    BarData barData = new BarData(daysOfMonth, barDataSet);
+                    barChart.setData(barData);
+                    barChart.setDescription(descr);
+                }
+                else
+                {
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data does not exist for selected Week.....");
+                    dialog.show();
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyValues> call, Throwable t) {
+                Toast.makeText(context,"Error occured, Could not get weekly values",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
 
 
 

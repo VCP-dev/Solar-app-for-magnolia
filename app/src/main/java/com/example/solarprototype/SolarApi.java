@@ -49,6 +49,7 @@ public class SolarApi {
 
         @GET("systems/1685487/energy_lifetime")
         Call<WeeklyValues> getValuesofWeek(@Query("start_date") String startdate, @Query("end_date") String enddate, @Query("key") String apikey, @Query("user_id") String user_id);
+
     }
 
 
