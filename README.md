@@ -4,4 +4,6 @@ Solar built specifically for magnolia block at Brigade Millenium for interacting
 
 
 NOTE:
-Current app can recieve energy produced for today and for the week of 2020-03-16 to 2020-03-22
+Current app can recieve energy produced for any selected day, any selected week
+
+
