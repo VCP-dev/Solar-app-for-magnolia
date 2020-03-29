@@ -1,19 +1,28 @@
 package com.example.solarprototype.Fragments;
 
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.WeeklyDetails;
 import com.example.solarprototype.R;
@@ -31,6 +40,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.tabs.TabLayout;
 
 import java.lang.reflect.Array;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Month;
@@ -53,11 +63,81 @@ public class EnergyFragment extends Fragment {
     Random random;
     ArrayList<BarEntry> barEntries;
     TabLayout tabLayout;
+    Button selectweek;
 
 
     TextView barselectedvalue;
     TextView Barselectedavgvalue;
     TextView BarselectedY;
+
+
+
+
+    public static final int EnergyREQUEST_CODE = 22;    ///  Used to identify the result
+
+    private OnFragmentInteractionListener mListener;
+
+    public static EnergyFragment newInstance() {
+        EnergyFragment fragment = new EnergyFragment();
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    public EnergyFragment()
+    {
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // check for the results
+        if (requestCode == EnergyREQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // get date from string
+            String selectedDate = data.getStringExtra("selectedDate");
+            // set the values
+            createWeekBarGraph("Weekly analysis",selectedDate);
+        }
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } /*else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }*/
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+
+
+
+
+    public String returncurrentdate()
+    {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String curdate = dateFormat.format(calendar.getTime());
+        return curdate;
+    }
 
 
     @Nullable
@@ -77,8 +157,10 @@ public class EnergyFragment extends Fragment {
         barChart.setPinchZoom(false);
         barChart.setDoubleTapToZoomEnabled(false);
 
+        final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+
         //changegraph(0);
-        createWeekBarGraph("Weekly analysis");
+        //createWeekBarGraph("Weekly analysis","2020-03-19");
 
         barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -127,6 +209,21 @@ public class EnergyFragment extends Fragment {
         });
 
 
+        selectweek = v.findViewById(R.id.setweekbutton);
+        selectweek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AppCompatDialogFragment newFragment = new DatePickerFragment();
+                // set the targetFragment to receive the results, specifying the request code
+                newFragment.setTargetFragment(EnergyFragment.this,EnergyREQUEST_CODE);
+                // show the datePicker
+                newFragment.show(fm, "datePicker");
+
+            }
+        });
+
+
         return v;
 
     }
@@ -137,48 +234,77 @@ public class EnergyFragment extends Fragment {
         {
             case 0:
                 //createRandomBarGraph("2020/05/01","2020/05/07","Weekly analysis");
-                createWeekBarGraph("Weekly analysis");
+                //createWeekBarGraph("Weekly analysis","2020-03-19");
+                selectweek.setText("Select Desired Week");
+                selectweek.setVisibility(View.VISIBLE);
                 break;
             case 1:
                 createRandomBarGraph("2020/05/01","2020/06/01","Monthly analysis");
+                selectweek.setText("Select Desired Month");
+                selectweek.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 createRandomBarGraph("2020/05/01","2020/05/13","Yearly analysis");
+                selectweek.setText("Select desired year");
+                selectweek.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 createRandomBarGraph("2020/05/01","2020/05/02","Lifetime");
+                selectweek.setVisibility(View.INVISIBLE);
                 break;
         }
     }
 
 
-    public void createWeekBarGraph(String description)
+    public void createWeekBarGraph(String description,String date)
     {
-        getWeeklyValues(getContext(),description);
+        barChart.clear();
+        ArrayList<String> selectedweek = WeeklyDetails.GetWeekdates(date);
+        String startdate = selectedweek.get(0);
+        String enddate = selectedweek.get(selectedweek.size()-1);
+        getWeeklyValues(getContext(),description,startdate,enddate);
         Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
 
-    private void getWeeklyValues(final Context context,String description)
+    private void getWeeklyValues(final Context context, String description, final String startdate, String enddate)
     {
         Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
-        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek("2020-03-16","2020-03-22",SolarApi.apikey,SolarApi.user_id);
+        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
         final String descr = description;
         weeklyValues.enqueue(new Callback<WeeklyValues>() {
             @Override
             public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
-                WeeklyValues values = response.body();
-                ArrayList<String> weekdays = WeeklyDetails.GetWeekdates("2020-03-19");
-                barEntries = new ArrayList<>();
-                List<Integer> valuesofweek = values.getProduction();
-                for(int j=0;j<weekdays.size();j++)
-                {
-                    float entryvalue = ((float) valuesofweek.get(j))/1000.0f;
-                    barEntries.add(new BarEntry(entryvalue,j));
+
+                if(response.body() instanceof WeeklyValues) {
+
+                    WeeklyValues values = response.body();
+
+                    ArrayList<String> weekdays = null;
+
+                    weekdays = WeeklyDetails.GetWeekdates(startdate);
+
+                    barEntries = new ArrayList<>();
+                    List<Integer> valuesofweek = values.getProduction();
+                    for (int j = 0; j < weekdays.size(); j++) {
+                        float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                        barEntries.add(new BarEntry(entryvalue, j));
+                    }
+                    BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
+                    BarData barData = new BarData(weekdays, barDataSet);
+                    barChart.setData(barData);
+                    barChart.setDescription(descr);
                 }
-                BarDataSet barDataSet = new BarDataSet(barEntries,"Dates");
-                BarData barData = new BarData(weekdays,barDataSet);
-                barChart.setData(barData);
-                barChart.setDescription(descr);
+                else
+                {
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data does not exist for selected Week.....");
+                    dialog.show();
+                    return;
+                }
             }
 
             @Override

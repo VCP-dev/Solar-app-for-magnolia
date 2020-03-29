@@ -66,13 +66,21 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barchart"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="340dp"
             android:layout_margin="5dp"
             >
 
         </com.github.mikephil.charting.charts.BarChart>
 
-        <!--Delete textviews from this point-->
+        <Button
+            android:id="@+id/setweekbutton"
+            android:text="Select desired week"
+            android:textColor="#FFFFFF"
+            android:layout_margin="22dp"
+            android:background="@drawable/button_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 
         <LinearLayout
             android:layout_margin="6dp"
