@@ -13,10 +13,10 @@ import retrofit2.http.Query;
 
 public class SolarApi {
 
-    public static final String system_id="1685487";
-    public static final String apikey="a458e9f43bad8aaec8121015f8b67b0f";
-    public static final String user_id="4d5467324e446b304d773d3d0a";
-    public static final String url="https://api.enphaseenergy.com/api/v2/";
+    public static final String system_id="";  //// enter system id here
+    public static final String apikey="";  //// enter api key here
+    public static final String user_id="";  //// enter user id here
+    public static final String url="";  //// enter base url here
 
 
 
