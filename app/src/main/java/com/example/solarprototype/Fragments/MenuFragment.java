@@ -119,21 +119,25 @@ public class MenuFragment extends Fragment {
                     listItems[i]="Postal Code: "+s.getPostalCode();
                     StoredValues.Postalcode = "Postal Code: "+s.getPostalCode();
                 }
-
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,android.R.id.text1,listItems);
-                menulist.setAdapter(arrayAdapter);
-
-                sysname.setText(datalist.get(1));
-                sysid.setText(datalist.get(0));
-                StoredValues.systemname = datalist.get(1);
-                StoredValues.systemID = datalist.get(0);
+                if(getContext()!=null) {
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, listItems);
+                    menulist.setAdapter(arrayAdapter);
+                    sysname.setText(datalist.get(1));
+                    sysid.setText(datalist.get(0));
+                    StoredValues.systemname = datalist.get(1);
+                    StoredValues.systemID = datalist.get(0);
+                }
+                else{
+                    call.cancel();
+                }
             }
 
             @Override
             public void onFailure(Call<PostData> call, Throwable t) {
-                Toast.makeText(context,"Error occured",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error occured", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
 

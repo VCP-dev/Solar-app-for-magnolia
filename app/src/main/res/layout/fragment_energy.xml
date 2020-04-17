@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <com.google.android.material.tabs.TabItem
+            <!--<com.google.android.material.tabs.TabItem
                 android:text="year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -51,7 +51,7 @@
             <com.google.android.material.tabs.TabItem
                 android:text="lifetime"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"/>-->
 
         </com.google.android.material.tabs.TabLayout>
 
@@ -79,7 +79,7 @@
 
         <Button
             android:id="@+id/setweekbutton"
-            android:text="Select desired week"
+            android:text="Select Desired Week"
             android:textColor="#FFFFFF"
             android:layout_margin="22dp"
             android:background="@drawable/button_background"
@@ -93,6 +93,15 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/totalpower"
+                android:padding="20dp"
+                android:textStyle="bold"
+                android:text=""
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/barselectedY"

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,8 +71,10 @@ public class EnergyFragment extends Fragment {
     TextView barselectedvalue;
     TextView Barselectedavgvalue;
     TextView BarselectedY;
+    TextView totalpower;
 
 
+    float totalvalue;
 
 
     public static final int EnergyREQUEST_CODE = 22;    ///  Used to identify the result
@@ -100,6 +103,10 @@ public class EnergyFragment extends Fragment {
         if (requestCode == EnergyREQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // get date from string
             String selectedDate = data.getStringExtra("selectedDate");
+            totalpower.setText("");
+            BarselectedY.setText("");
+            barselectedvalue.setText("");
+            Barselectedavgvalue.setText("");
             // set the values
             switch(selectweek.getText().toString())
             {
@@ -156,6 +163,11 @@ public class EnergyFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_energy,container,false);
 
+        totalvalue = 0;
+
+        selectweek = v.findViewById(R.id.setweekbutton);
+
+        totalpower = v.findViewById(R.id.totalpower);
         barselectedvalue = v.findViewById(R.id.barselectedvalue);
         Barselectedavgvalue = v.findViewById(R.id.barselectedavgvalue);
         BarselectedY = v.findViewById(R.id.barselectedY);
@@ -172,9 +184,15 @@ public class EnergyFragment extends Fragment {
         //changegraph(0);
         //createWeekBarGraph("Weekly analysis","2020-03-19");
 
+        //     createWeekBarGraph("Weekly analysis",returncurrentdate());
+
+
         barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+
+                float totalpowerproduced = totalvalue;
+                totalpower.setText("Total power produced : "+totalpowerproduced);
 
                 BarselectedY.setText("Data for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");
 
@@ -188,6 +206,7 @@ public class EnergyFragment extends Fragment {
 
             @Override
             public void onNothingSelected() {
+                totalpower.setText("");
                 BarselectedY.setText("");
                 barselectedvalue.setText("");
                 Barselectedavgvalue.setText("");
@@ -202,6 +221,7 @@ public class EnergyFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 barChart.clear();
                 changegraph(tab.getPosition());
+                totalpower.setText("");
                 BarselectedY.setText("");
                 barselectedvalue.setText("");
                 Barselectedavgvalue.setText("");
@@ -219,7 +239,7 @@ public class EnergyFragment extends Fragment {
         });
 
 
-        selectweek = v.findViewById(R.id.setweekbutton);
+
         selectweek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,17 +263,16 @@ public class EnergyFragment extends Fragment {
         switch(pos)
         {
             case 0:
-                //createRandomBarGraph("2020/05/01","2020/05/07","Weekly analysis");
-                //createWeekBarGraph("Weekly analysis","2020-03-19");
                 selectweek.setText("Select Desired Week");
                 selectweek.setVisibility(View.VISIBLE);
+                //     createWeekBarGraph("Weekly analysis",returncurrentdate());
                 break;
             case 1:
-                //createRandomBarGraph("2020/05/01","2020/06/01","Monthly analysis");
                 selectweek.setText("Select Desired Month");
                 selectweek.setVisibility(View.VISIBLE);
+                //     createMonthBargraph("Monthly analysis",returncurrentdate());
                 break;
-            case 2:
+            /*case 2:
                 createRandomBarGraph("2020/05/01","2020/05/13","Yearly analysis");
                 selectweek.setText("Select desired year");
                 selectweek.setVisibility(View.VISIBLE);
@@ -261,7 +280,7 @@ public class EnergyFragment extends Fragment {
             case 3:
                 createRandomBarGraph("2020/05/01","2020/05/02","Lifetime");
                 selectweek.setVisibility(View.INVISIBLE);
-                break;
+                break;*/
         }
     }
 
@@ -271,12 +290,18 @@ public class EnergyFragment extends Fragment {
         barChart.clear();
         ArrayList<String> selectedweek = WeeklyDetails.GetWeekdates(date);
         String startdate = selectedweek.get(0);
-        String enddate = selectedweek.get(selectedweek.size()-1);
+        String enddate;
+        if(selectedweek.contains(returncurrentdate())){
+            enddate = returncurrentdate();
+        }
+        else {
+            enddate = selectedweek.get(selectedweek.size() - 1);
+        }
         getWeeklyValues(getContext(),description,startdate,enddate);
         Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
 
-    private void getWeeklyValues(final Context context, String description, final String startdate, String enddate)
+    private void getWeeklyValues(final Context context, String description, final String startdate, final String enddate)
     {
         Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
         Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
@@ -287,22 +312,45 @@ public class EnergyFragment extends Fragment {
 
                 if(response.body() instanceof WeeklyValues) {
 
+                    totalvalue = 0;
+
                     WeeklyValues values = response.body();
 
                     ArrayList<String> weekdays = null;
 
-                    weekdays = WeeklyDetails.GetWeekdates(startdate);
+                    weekdays = WeeklyDetails.GetWeekdates(startdate,enddate);
 
                     barEntries = new ArrayList<>();
                     List<Integer> valuesofweek = values.getProduction();
-                    for (int j = 0; j < weekdays.size(); j++) {
-                        float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
-                        barEntries.add(new BarEntry(entryvalue, j));
+                    if(enddate!=returncurrentdate()) {
+                        for (int j = 0; j < weekdays.size(); j++) {
+                            try {
+                                float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                                totalvalue += entryvalue;
+                                barEntries.add(new BarEntry(entryvalue, j));
+                            }
+                            catch(Exception e)
+                            {
+                                Log.println(Log.ASSERT,"Caught exception:",e.getMessage().toString());
+                            }
+                        }
+                    }
+                    else{
+                        for (int j = 0; j < weekdays.size()-1; j++) {
+                            float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                            totalvalue += entryvalue;
+                            barEntries.add(new BarEntry(entryvalue, j));
+                        }
                     }
                     BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
                     BarData barData = new BarData(weekdays, barDataSet);
                     barChart.setData(barData);
                     barChart.setDescription(descr);
+                    barChart.fitScreen();
+                    totalpower.setText("");
+                    BarselectedY.setText("");
+                    barselectedvalue.setText("");
+                    Barselectedavgvalue.setText("");
                 }
                 else
                 {
@@ -330,12 +378,18 @@ public class EnergyFragment extends Fragment {
         barChart.clear();
         ArrayList<String> selectedMonth = monthlydetails.GetMonthDates(date);
         String startdate = selectedMonth.get(0);
-        String enddate = selectedMonth.get(selectedMonth.size()-1);
+        String enddate;
+        if(selectedMonth.contains(returncurrentdate())){
+            enddate = returncurrentdate();
+        }
+        else{
+            enddate = selectedMonth.get(selectedMonth.size()-1);
+        }
         getMonthlyValues(getContext(),description,startdate,enddate);
         Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
 
-    public void getMonthlyValues(final Context context, String description, final String startdate, String enddate)
+    public void getMonthlyValues(final Context context, String description, final String startdate, final String enddate)
     {
         Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
         final Call<WeeklyValues> monthlyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
@@ -347,22 +401,45 @@ public class EnergyFragment extends Fragment {
 
                 if(response.body() instanceof WeeklyValues) {
 
+                    totalvalue = 0;
+
                     WeeklyValues values = response.body();
 
                     ArrayList<String> daysOfMonth = null;
 
-                    daysOfMonth = monthlydetails.GetMonthDates(startdate);
+                    daysOfMonth = monthlydetails.GetMonthDates(startdate,enddate);
 
                     barEntries = new ArrayList<>();
                     List<Integer> valuesofweek = values.getProduction();
-                    for (int j = 0; j < daysOfMonth.size(); j++) {
-                        float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
-                        barEntries.add(new BarEntry(entryvalue, j));
+                    if(enddate!=returncurrentdate()) {
+                        for (int j = 0; j < daysOfMonth.size(); j++) {
+                            try {
+                                float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                                totalvalue += entryvalue;
+                                barEntries.add(new BarEntry(entryvalue, j));
+                            }
+                            catch(Exception e)
+                            {
+                                Log.println(Log.ASSERT,"Caught exception:",e.getMessage().toString());
+                            }
+                        }
+                    }
+                    else{
+                        for (int j = 0; j < daysOfMonth.size()-1; j++) {
+                            float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;
+                            totalvalue += entryvalue;
+                            barEntries.add(new BarEntry(entryvalue, j));
+                        }
                     }
                     BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
                     BarData barData = new BarData(daysOfMonth, barDataSet);
                     barChart.setData(barData);
                     barChart.setDescription(descr);
+                    barChart.fitScreen();
+                    totalpower.setText("");
+                    BarselectedY.setText("");
+                    barselectedvalue.setText("");
+                    Barselectedavgvalue.setText("");
                 }
                 else
                 {

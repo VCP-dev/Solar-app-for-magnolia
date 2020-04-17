@@ -264,7 +264,7 @@ public class StatusFragment extends Fragment {
                     float avgval = today.getEnergyToday() / 49.7f;
                     int ka = (int) avgval / 1000;
                     int ra = (int) avgval % 1000;
-                    String avgvalue = ka + "." + r;
+                    String avgvalue = ka + "." + ra;
                     datalist.add(/* "Energy produced today is: "+*/ value);
                     datalist.add(/* "Units/kWp is: "+*/ avgvalue);
 
@@ -329,7 +329,7 @@ public class StatusFragment extends Fragment {
                 float avgval = today.getEnergyToday()/49.7f;
                 int ka = (int)avgval/1000;
                 int ra = (int)avgval%1000;
-                String avgvalue = ka+"."+r;
+                String avgvalue = ka+"."+ra;
                 datalist.add(/* "Energy produced today is: "+*/ value);
                 datalist.add(/* "Units/kWp is: "+*/ avgvalue);
 
