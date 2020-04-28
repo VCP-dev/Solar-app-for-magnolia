@@ -4,15 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.solarprototype.Fragments.EnergyFragment;
 import com.example.solarprototype.Fragments.MenuFragment;
 import com.example.solarprototype.Fragments.StatusFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,11 +28,14 @@ public class MainActivity extends AppCompatActivity {
     ListView listview;
     ArrayList<String> datalist;
 
+    public static Context MainActivityContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MainActivityContext = getApplicationContext();
 
         BottomNavigationView bottomnav = findViewById(R.id.bottom_navigation);
         bottomnav.setOnNavigationItemSelectedListener(navListener);
@@ -61,6 +72,55 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
+
+
+
+
+
+    public static String returnapivalue(String value, Context context){
+        String returnedvalue = null;
+        try {
+            JSONObject obj = new JSONObject(loadJSONFromAsset(context));
+            switch(value)
+            {
+                case "apikey":
+                    returnedvalue = obj.getString("apikey");
+                    break;
+                case "user_id":
+                    returnedvalue = obj.getString("user_id");
+                    break;
+                case "system_id":
+                    returnedvalue = obj.getString("system_id");
+                    break;
+                case "url":
+                    returnedvalue = obj.getString("url");
+                    break;
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+        Toast.makeText(context,returnedvalue,Toast.LENGTH_SHORT);
+        return returnedvalue;
+    }
+
+    public static String loadJSONFromAsset(Context context){
+        String json;
+        try{
+            InputStream is = context.getAssets().open("apivalues.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer,"UTF-8");
+        }
+        catch(IOException ex){
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
 
 
 

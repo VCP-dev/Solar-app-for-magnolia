@@ -32,10 +32,16 @@ import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.R;
 import com.example.solarprototype.SolarApi;
+import com.example.solarprototype.SplashScreenActivity;
 import com.example.solarprototype.StoredValues;
 import com.example.solarprototype.SummaryOfDay;
 import com.example.solarprototype.RequestedValues.System;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +76,7 @@ public class StatusFragment extends Fragment {
     Boolean valuespresent;
 
     ColorStateList oldColors;
+
 
 
     public static final int REQUEST_CODE = 11;    ///  Used to identify the result
@@ -140,6 +147,9 @@ public class StatusFragment extends Fragment {
             sysstatus.setTextColor(oldColors);
             energyproduced.setTextColor(oldColors);
             unitsperkwp.setTextColor(oldColors);
+            sysstatus.setTextSize(14);
+            energyproduced.setTextSize(14);
+            unitsperkwp.setTextSize(14);
             average_power_for_selected_day(getContext(),selectedDate);
             getdata(getContext());
         }
@@ -176,6 +186,7 @@ public class StatusFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_status,container,false);
 
+
         currentdate = v.findViewById(R.id.currentdate);
         energyproduced = v.findViewById(R.id.energyproduced);
         unitsperkwp = v.findViewById(R.id.unitsperkwp);
@@ -192,6 +203,7 @@ public class StatusFragment extends Fragment {
         currentdate.setText("Details for  "+date);
 
         oldColors = energyproduced.getTextColors();
+
 
         final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
 
@@ -218,6 +230,9 @@ public class StatusFragment extends Fragment {
                 sysstatus.setTextColor(oldColors);
                 energyproduced.setTextColor(oldColors);
                 unitsperkwp.setTextColor(oldColors);
+                sysstatus.setTextSize(14);
+                energyproduced.setTextSize(14);
+                unitsperkwp.setTextSize(14);
                 average_power_per_day(getContext());
                 getdata(getContext());
             }
@@ -247,7 +262,7 @@ public class StatusFragment extends Fragment {
     private void average_power_for_selected_day(final Context context,String date)               //////   for the selected day
     {
 
-        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(date,SolarApi.apikey,SolarApi.user_id);
+        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(MainActivity.returnapivalue("system_id",context),date,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         summaryOfDay.enqueue(new Callback<SummaryOfDay>() {
             @Override
             public void onResponse(Call<SummaryOfDay> call, Response<SummaryOfDay> response) {
@@ -315,7 +330,7 @@ public class StatusFragment extends Fragment {
     private void average_power_per_day(final Context context)               //////   for the current day
     {
 
-        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(returncurrentdate(),SolarApi.apikey,SolarApi.user_id);
+        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(MainActivity.returnapivalue("system_id",context),returncurrentdate(),MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         summaryOfDay.enqueue(new Callback<SummaryOfDay>() {
             @Override
             public void onResponse(Call<SummaryOfDay> call, Response<SummaryOfDay> response) {
@@ -363,7 +378,7 @@ public class StatusFragment extends Fragment {
 
     private void getdata(final Context context)                  //////  for general details
     {
-        Call<PostData> postData = SolarApi.getService().getPostData();
+        Call<PostData> postData = SolarApi.getService().getPostData(MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         postData.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {
@@ -396,6 +411,18 @@ public class StatusFragment extends Fragment {
             }
         });
     }
+
+
+
+
+
+
+    //////  for api values
+
+
+
+
+
 
 
 

@@ -22,7 +22,7 @@ public class APIrequests {
     private void average_power_per_day(final Context context)               //////   for the current day
     {
 
-        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday("current date","api key","user id");
+        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday("system id","current date","api key","user id");
         summaryOfDay.enqueue(new Callback<SummaryOfDay>() {
             @Override
             public void onResponse(Call<SummaryOfDay> call, Response<SummaryOfDay> response) {
@@ -70,7 +70,7 @@ public class APIrequests {
 
     private void getWeeklyValues(final Context context)
     {
-        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek("start date","end date","api key","uer id");
+        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek("system id","start date","end date","api key","uer id");
         weeklyValues.enqueue(new Callback<WeeklyValues>() {
             @Override
             public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
@@ -92,7 +92,7 @@ public class APIrequests {
 
     private void getdata(final Context context)                  //////  for general details
     {
-        Call<PostData> postData = SolarApi.getService().getPostData();
+        Call<PostData> postData = SolarApi.getService().getPostData("apikey","user id");
         postData.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {

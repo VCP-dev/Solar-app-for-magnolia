@@ -15,9 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.R;
 import com.example.solarprototype.SolarApi;
+import com.example.solarprototype.SplashScreenActivity;
 import com.example.solarprototype.StoredValues;
 import com.example.solarprototype.RequestedValues.System;
 
@@ -91,7 +93,7 @@ public class MenuFragment extends Fragment {
 
     private void getdata(final Context context)                  //////  for general details
     {
-        Call<PostData> postData = SolarApi.getService().getPostData();
+        Call<PostData> postData = SolarApi.getService().getPostData(MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         postData.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {

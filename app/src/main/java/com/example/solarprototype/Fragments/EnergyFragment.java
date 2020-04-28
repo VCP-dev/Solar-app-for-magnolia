@@ -27,9 +27,11 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.WeeklyDetails;
 import com.example.solarprototype.BarChartOperations.monthlydetails;
+import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.R;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
 import com.example.solarprototype.SolarApi;
+import com.example.solarprototype.SplashScreenActivity;
 import com.example.solarprototype.StoredValues;
 import com.example.solarprototype.SummaryOfDay;
 import com.github.mikephil.charting.charts.BarChart;
@@ -304,7 +306,7 @@ public class EnergyFragment extends Fragment {
     private void getWeeklyValues(final Context context, String description, final String startdate, final String enddate)
     {
         Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
-        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
+        Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         final String descr = description;
         weeklyValues.enqueue(new Callback<WeeklyValues>() {
             @Override
@@ -392,7 +394,7 @@ public class EnergyFragment extends Fragment {
     public void getMonthlyValues(final Context context, String description, final String startdate, final String enddate)
     {
         Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
-        final Call<WeeklyValues> monthlyValues = SolarApi.getService().getValuesofWeek(startdate,enddate,SolarApi.apikey,SolarApi.user_id);
+        final Call<WeeklyValues> monthlyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         final String descr = description;
 
         monthlyValues.enqueue(new Callback<WeeklyValues>() {
@@ -572,7 +574,7 @@ public class EnergyFragment extends Fragment {
     private void power_for_day(final Context context,String date)               //////   for whatever day is passed
     {
 
-        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(date,SolarApi.apikey,SolarApi.user_id);
+        Call<SummaryOfDay> summaryOfDay = SolarApi.getService().getSummaryOfToday(MainActivity.returnapivalue("system_id",context),date,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         summaryOfDay.enqueue(new Callback<SummaryOfDay>() {
             @Override
             public void onResponse(Call<SummaryOfDay> call, Response<SummaryOfDay> response) {
