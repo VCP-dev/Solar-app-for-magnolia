@@ -105,10 +105,10 @@ public class EnergyFragment extends Fragment {
         if (requestCode == EnergyREQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // get date from string
             String selectedDate = data.getStringExtra("selectedDate");
-            totalpower.setText("");
+            totalpower.setText("No data...");
             BarselectedY.setText("");
-            barselectedvalue.setText("");
-            Barselectedavgvalue.setText("");
+            barselectedvalue.setText("No data...");
+            Barselectedavgvalue.setText("No data...");
             // set the values
             switch(selectweek.getText().toString())
             {
@@ -194,24 +194,24 @@ public class EnergyFragment extends Fragment {
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
 
                 float totalpowerproduced = totalvalue;
-                totalpower.setText("Total power produced : "+totalpowerproduced);
+                totalpower.setText("Power produced during entire "+(typeoftab(tabLayout.getSelectedTabPosition()))+" = "+totalpowerproduced + " kWh");//totalpower.setText("Total power produced : "+totalpowerproduced);
 
-                BarselectedY.setText("Data for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");
+                BarselectedY.setText("Details for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");//BarselectedY.setText("Data for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");
 
                 final String selectedValue=String.valueOf(e.getVal());
-                barselectedvalue.setText("Power generated : "+selectedValue);
+                barselectedvalue.setText(selectedValue+" kWh");//barselectedvalue.setText("Power generated : "+selectedValue);
 
                 float avgvalue = Float.parseFloat(selectedValue)/49.7f;
-                Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
+                Barselectedavgvalue.setText(""+avgvalue);//Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
 
             }
 
             @Override
             public void onNothingSelected() {
-                totalpower.setText("");
-                BarselectedY.setText("");
-                barselectedvalue.setText("");
-                Barselectedavgvalue.setText("");
+                totalpower.setText("No data...");
+                BarselectedY.setText("No date selected...");
+                barselectedvalue.setText("No data...");
+                Barselectedavgvalue.setText("No data...");
             }
         });
 
@@ -223,10 +223,10 @@ public class EnergyFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 barChart.clear();
                 changegraph(tab.getPosition());
-                totalpower.setText("");
-                BarselectedY.setText("");
-                barselectedvalue.setText("");
-                Barselectedavgvalue.setText("");
+                totalpower.setText("No data...");
+                BarselectedY.setText("No date selected...");
+                barselectedvalue.setText("No data...");
+                Barselectedavgvalue.setText("No data...");
             }
 
             @Override
@@ -258,6 +258,21 @@ public class EnergyFragment extends Fragment {
 
         return v;
 
+    }
+
+    private String typeoftab(int pos)
+    {
+        String res="";
+        switch (pos)
+        {
+            case 0:
+                res="week";
+                break;
+            case 1:
+                res="month";
+                break;
+        }
+        return res;
     }
 
     private void changegraph(int pos)
@@ -349,10 +364,10 @@ public class EnergyFragment extends Fragment {
                     barChart.setData(barData);
                     barChart.setDescription(descr);
                     barChart.fitScreen();
-                    totalpower.setText("");
-                    BarselectedY.setText("");
-                    barselectedvalue.setText("");
-                    Barselectedavgvalue.setText("");
+                    totalpower.setText("No data...");
+                    BarselectedY.setText("No date selected...");
+                    barselectedvalue.setText("No data...");
+                    Barselectedavgvalue.setText("No data...");
                 }
                 else
                 {
@@ -438,10 +453,10 @@ public class EnergyFragment extends Fragment {
                     barChart.setData(barData);
                     barChart.setDescription(descr);
                     barChart.fitScreen();
-                    totalpower.setText("");
-                    BarselectedY.setText("");
-                    barselectedvalue.setText("");
-                    Barselectedavgvalue.setText("");
+                    totalpower.setText("No data...");
+                    BarselectedY.setText("No date selected...");
+                    barselectedvalue.setText("No data...");
+                    Barselectedavgvalue.setText("No data...");
                 }
                 else
                 {

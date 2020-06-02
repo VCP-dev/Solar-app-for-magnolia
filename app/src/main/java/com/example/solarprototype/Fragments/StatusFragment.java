@@ -36,6 +36,8 @@ import com.example.solarprototype.SplashScreenActivity;
 import com.example.solarprototype.StoredValues;
 import com.example.solarprototype.SummaryOfDay;
 import com.example.solarprototype.RequestedValues.System;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +65,8 @@ public class StatusFragment extends Fragment {
 
     Button getdetails;
     Button changedate;
+
+    FloatingActionButton updatebutton;
 
     // for current date
 
@@ -140,7 +144,7 @@ public class StatusFragment extends Fragment {
             // get date from string
             String selectedDate = data.getStringExtra("selectedDate");
             // set the values
-            currentdate.setText("Details for  "+selectedDate);
+            currentdate.setText("Details for  "+selectedDate+" :");
             sysstatus.setText("Retrieving system status....");
             energyproduced.setText("Retrieving details....");
             unitsperkwp.setText("Retrieving details....");
@@ -192,18 +196,21 @@ public class StatusFragment extends Fragment {
         unitsperkwp = v.findViewById(R.id.unitsperkwp);
         sysstatus = v.findViewById(R.id.sysstatus);
 
-        getdetails = v.findViewById(R.id.getbutton);
-        changedate = v.findViewById(R.id.datebutton);
+        //getdetails = v.findViewById(R.id.getbutton);
+        //changedate = v.findViewById(R.id.datebutton);
+
+        updatebutton = v.findViewById(R.id.floatingupdatebutton);
 
         calender = Calendar.getInstance();
         dateformat = new SimpleDateFormat("dd-MM-yyyy");
         date = dateformat.format(calender.getTime());
         dateformat = new SimpleDateFormat("yyyy-dd-MM");
         StoredValues.Todaysdate = dateformat.format(calender.getTime());
-        currentdate.setText("Details for  "+date);
+        currentdate.setText("Details for  "+date+" :");
 
         oldColors = energyproduced.getTextColors();
 
+        updatebutton.setSupportBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5904A0")));
 
         final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
 
@@ -219,10 +226,23 @@ public class StatusFragment extends Fragment {
             unitsperkwp.setTextColor(Color.parseColor("#000000"));
         }
 
-        getdetails.setOnClickListener(new View.OnClickListener() {
+
+
+        updatebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentdate.setText("Details for  "+returncurrentdate());
+                Snackbar.make(v,"Update button pressed",Snackbar.LENGTH_SHORT).setAction("Action",null).show();
+            }
+        });
+
+
+        ///   UNCOMMENT THIS FOR THOSE TWO BUTTONS IF THEY WILL BE USED
+
+
+        /*getdetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentdate.setText("Details for "+returncurrentdate()+" :");
                 Toast.makeText(getContext(),"Updating energy produced today....",Toast.LENGTH_SHORT).show();
                 sysstatus.setText("Retrieving system status....");
                 energyproduced.setText("Retrieving details....");
@@ -230,16 +250,21 @@ public class StatusFragment extends Fragment {
                 sysstatus.setTextColor(oldColors);
                 energyproduced.setTextColor(oldColors);
                 unitsperkwp.setTextColor(oldColors);
-                sysstatus.setTextSize(14);
+                //sysstatus.setTextSize(14);
                 energyproduced.setTextSize(14);
                 unitsperkwp.setTextSize(14);
                 average_power_per_day(getContext());
                 getdata(getContext());
             }
-        });
+        });*/
 
 
-        changedate.setOnClickListener(new View.OnClickListener() {
+
+        ///   UNCOMMENT THIS FOR THOSE TWO BUTTONS IF THEY WILL BE USED
+
+
+
+        /*changedate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppCompatDialogFragment newFragment = new DatePickerFragment();
@@ -248,10 +273,13 @@ public class StatusFragment extends Fragment {
                 // show the datePicker
                 newFragment.show(fm, "datePicker");
             }
-        });
+        });*/
 
         //average_power_per_day(this.getContext());
         //getdata(this.getContext());
+
+
+
 
         return v;
 

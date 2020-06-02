@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/statustoolbar"
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -20,88 +22,533 @@
                 android:layout_height="wrap_content"/>
 
 
-
     </androidx.appcompat.widget.Toolbar>
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingupdatebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/abc_vector_test"
+        android:contentDescription="update page"
+        android:clickable="true"
+        app:rippleColor="@color/colorPrimaryDark"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="22dp"
+        />
+
+
     <TextView
+        android:layout_below="@id/statustoolbar"
         android:text="Status currently unknown...."
-        android:textSize="16dp"
+        android:textSize="19dp"
         android:id="@+id/sysstatus"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="7dp"
         android:layout_marginRight="7dp"
         android:layout_marginBottom="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-    <TextView
-        android:textColor="#000"
-        android:textStyle="bold"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="33dp"
-        android:id="@+id/currentdate"
-        android:text="Details for Current date"
-        android:textSize="22dp"
+        android:paddingBottom="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 
     <LinearLayout
-        android:background="@drawable/textbackground"
+        android:layout_below="@+id/sysstatus"
+        android:id="@+id/datasection"
         android:orientation="vertical"
-        android:layout_marginTop="18dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:textColor="#000"
-            android:textSize="15dp"
-            android:text="Energy produced today:"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/energyproduced"
-            android:text="No data ....."
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <!--layout which contains segments-->
+            <LinearLayout
+                android:background="#F0EFEF"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="37dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:textColor="#000"
-            android:textSize="15dp"
-            android:layout_marginTop="10dp"
-            android:text="Units/kWp produced:"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/unitsperkwp"
-            android:text="No data ...."
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <!--first segment--><!--today-->
+                <LinearLayout
+                    android:layout_margin="4dp"
+                    android:background="@drawable/textbackground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+
+
+                    <TextView
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/currentdate"
+                        android:text="Details for Current date :"
+                        android:textSize="22dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:padding="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:text="Energy produced today:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/energyproduced"
+                                android:text="No data ....."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="0.02"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- empty layout -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Units/kWp produced:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/unitsperkwp"
+                                android:text="No data ...."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--end of first segment--><!--today-->
+
+
+
+                <!--second segment--><!--yesterday-->
+                <LinearLayout
+                    android:layout_margin="4dp"
+                    android:background="@drawable/textbackground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/yesterdaydate"
+                        android:text="Details for yesterday :"
+                        android:textSize="22dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:padding="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#000"
+                                android:textSize="12dp"
+                                android:text="Energy produced yesterday:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/energyproducedyesterday"
+                                android:text="No data ....."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="0.02"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- empty layout -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Units/kWp produced:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/unitsperkwpyesterday"
+                                android:text="No data ...."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--end of second segment--><!--yesterday-->
+
+
+
+                <!--third segment--><!--this month-->
+                <LinearLayout
+                    android:layout_margin="4dp"
+                    android:background="@drawable/textbackground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/thismonth"
+                        android:text="Details for this month :"
+                        android:textSize="22dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:padding="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#000"
+                                android:textSize="12dp"
+                                android:text="Energy produced this month:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/energyproducedthismonth"
+                                android:text="No data ....."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="0.02"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- empty layout -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Units/kWp produced:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/unitsperkwpthismonth"
+                                android:text="No data ...."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--end of third segment--><!--this month-->
+
+
+                <!--fourth segment--><!--last month-->
+                <LinearLayout
+                    android:layout_margin="4dp"
+                    android:background="@drawable/textbackground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/lastmonth"
+                        android:text="Details for last month :"
+                        android:textSize="22dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:padding="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#000"
+                                android:textSize="12dp"
+                                android:text="Energy produced last month:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/energyproducedlastmonth"
+                                android:text="No data ....."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="0.02"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- empty layout -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Units/kWp produced:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/unitsperkwplastmonth"
+                                android:text="No data ...."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--end of fourth segment--><!--last month-->
+
+
+
+            </LinearLayout>
+            <!--end of layout which contains segments-->
+
+
+            <!--end of scrollview-->
+        </ScrollView>
 
     </LinearLayout>
 
+
+
+
+    <!-- buttons -->
     <LinearLayout
+        android:visibility="gone"
         android:paddingTop="47dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <Button
+            android:text="Get Details "
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/button_background"
+            android:id="@+id/getbutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <!--<Button
             android:text="Get Details of different date"
             android:textColor="#FFFFFF"
-            android:layout_margin="22dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/button_background"
             android:id="@+id/datebutton"
             android:layout_width="match_parent"
@@ -111,11 +558,14 @@
         <Button
             android:text="Get Details of today"
             android:textColor="#FFFFFF"
-            android:layout_margin="22dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/button_background"
             android:id="@+id/getbutton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>-->
 
 
     </LinearLayout>
@@ -123,4 +573,4 @@
 
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,10 +1,15 @@
 package com.example.solarprototype;
 
 import androidx.annotation.NonNull;
+//import androidx.appcompat.app.ActionBar;
+import android.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -45,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         //listview = findViewById(R.id.Solarlistview);
         //getdata();
         //average_power_per_day();
+
+        //final ActionBar actionBar = getActionBar();
+        //BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),R.drawable.solar_panel_image));
+        //background.setTileModeX(Shader.TileMode.REPEAT);
+        //actionBar.setBackgroundDrawable(background);
     }
 
 
