@@ -2,13 +2,6 @@ package com.example.solarprototype;
 
 public class StoredValues {
 
-    public static String Todaysdate = null;
-
-    public static String SystemStatus = null;
-
-    public static String energyproducedtoday = null;
-
-    public static String unitsperkwptoday = null;
 
     public static String systemname = null;
 
@@ -25,5 +18,30 @@ public class StoredValues {
     public static String city = null;
 
     public static String Postalcode = null;
+
+
+        //////   values for status fragment
+
+    public static String Todaysdate = null;
+
+    public static String Yesterdaysdate = null;
+
+    public static String SystemStatus = null;
+
+    public static String energyproducedtoday = null;
+
+    public static String unitsperkwptoday = null;
+
+    public static String energyproducedyesterday = null;
+
+    public static String unitsperkwpyesterday = null;
+
+    public static String energyproducedthismonth = null;
+
+    public static String unitsperkwpthismonth = null;
+
+    public static String energyproducedlastmonth = null;
+
+    public static String unitsperkwplastmonth = null;
 
 }

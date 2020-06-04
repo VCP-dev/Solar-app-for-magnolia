@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomnav = findViewById(R.id.bottom_navigation);
         bottomnav.setOnNavigationItemSelectedListener(navListener);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_containor,new StatusFragment(StoredValues.SystemStatus,StoredValues.energyproducedtoday,StoredValues.unitsperkwptoday)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_containor,new StatusFragment(StoredValues.SystemStatus,StoredValues.energyproducedtoday,StoredValues.unitsperkwptoday,StoredValues.energyproducedyesterday,StoredValues.unitsperkwpyesterday,StoredValues.energyproducedthismonth, StoredValues.unitsperkwpthismonth,StoredValues.energyproducedlastmonth,StoredValues.unitsperkwplastmonth)).commit();
 
         //listview = findViewById(R.id.Solarlistview);
         //getdata();
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     switch(menuItem.getItemId())
                     {
                         case R.id.nav_status:
-                            selectedfragment = new StatusFragment(StoredValues.SystemStatus,StoredValues.energyproducedtoday,StoredValues.unitsperkwptoday);
+                            selectedfragment = new StatusFragment(StoredValues.SystemStatus,StoredValues.energyproducedtoday,StoredValues.unitsperkwptoday,StoredValues.energyproducedyesterday,StoredValues.unitsperkwpyesterday,StoredValues.energyproducedthismonth, StoredValues.unitsperkwpthismonth,StoredValues.energyproducedlastmonth,StoredValues.unitsperkwplastmonth);
                             break;
                         case R.id.nav_energy:
                             selectedfragment = new EnergyFragment();

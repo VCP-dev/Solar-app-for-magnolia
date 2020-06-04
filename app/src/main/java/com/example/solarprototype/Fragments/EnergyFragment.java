@@ -118,6 +118,8 @@ public class EnergyFragment extends Fragment {
                 case "Select Desired Month":
                     createMonthBargraph("Monthly analysis",selectedDate);
                     break;
+                default:
+                    break;
             }
 
         }
@@ -428,7 +430,7 @@ public class EnergyFragment extends Fragment {
 
                     barEntries = new ArrayList<>();
                     List<Integer> valuesofweek = values.getProduction();
-                    if(enddate!=returncurrentdate()) {
+                    if(enddate!=returncurrentdate()) {                    ///     checking to see if enddate is the current date
                         for (int j = 0; j < daysOfMonth.size(); j++) {
                             try {
                                 float entryvalue = ((float) valuesofweek.get(j)) / 1000.0f;

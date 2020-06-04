@@ -28,6 +28,7 @@
         </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.tabs.TabLayout
+            android:visibility="gone"
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -82,7 +83,7 @@
 
         <Button
             android:id="@+id/setweekbutton"
-            android:text="Select Desired Week"
+            android:text="Select Desired Month"
             android:textColor="#FFFFFF"
             android:layout_margin="22dp"
             android:background="@drawable/button_background"

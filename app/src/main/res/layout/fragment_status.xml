@@ -42,7 +42,7 @@
     <TextView
         android:layout_below="@id/statustoolbar"
         android:text="Status currently unknown...."
-        android:textSize="19dp"
+        android:textSize="17dp"
         android:id="@+id/sysstatus"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="7dp"
@@ -87,13 +87,13 @@
                     <TextView
                         android:textColor="#000"
                         android:textStyle="bold"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="10dp"
                         android:id="@+id/currentdate"
                         android:text="Details for Current date :"
-                        android:textSize="22dp"
+                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -101,7 +101,7 @@
                     <LinearLayout
 
                         android:orientation="horizontal"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="2dp"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_marginBottom="8dp"
@@ -122,7 +122,7 @@
                                 android:layout_marginTop="10dp"
                                 android:textColor="#000"
                                 android:textSize="14dp"
-                                android:text="Energy produced today:"
+                                android:text="Energy produced :"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -196,13 +196,13 @@
                     <TextView
                         android:textColor="#000"
                         android:textStyle="bold"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="10dp"
                         android:id="@+id/yesterdaydate"
                         android:text="Details for yesterday :"
-                        android:textSize="22dp"
+                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -210,7 +210,7 @@
                     <LinearLayout
 
                         android:orientation="horizontal"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="2dp"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_marginBottom="8dp"
@@ -230,8 +230,8 @@
                                 android:layout_marginLeft="2dp"
                                 android:layout_marginTop="10dp"
                                 android:textColor="#000"
-                                android:textSize="12dp"
-                                android:text="Energy produced yesterday:"
+                                android:textSize="14dp"
+                                android:text="Energy produced :"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -305,13 +305,13 @@
                     <TextView
                         android:textColor="#000"
                         android:textStyle="bold"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="10dp"
                         android:id="@+id/thismonth"
                         android:text="Details for this month :"
-                        android:textSize="22dp"
+                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -319,7 +319,7 @@
                     <LinearLayout
 
                         android:orientation="horizontal"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="2dp"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_marginBottom="8dp"
@@ -339,8 +339,8 @@
                                 android:layout_marginLeft="2dp"
                                 android:layout_marginTop="10dp"
                                 android:textColor="#000"
-                                android:textSize="12dp"
-                                android:text="Energy produced this month:"
+                                android:textSize="14dp"
+                                android:text="Energy produced :"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -413,13 +413,13 @@
                     <TextView
                         android:textColor="#000"
                         android:textStyle="bold"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="10dp"
                         android:id="@+id/lastmonth"
                         android:text="Details for last month :"
-                        android:textSize="22dp"
+                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -427,7 +427,7 @@
                     <LinearLayout
 
                         android:orientation="horizontal"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="2dp"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_marginBottom="8dp"
@@ -447,8 +447,8 @@
                                 android:layout_marginLeft="2dp"
                                 android:layout_marginTop="10dp"
                                 android:textColor="#000"
-                                android:textSize="12dp"
-                                android:text="Energy produced last month:"
+                                android:textSize="14dp"
+                                android:text="Energy produced :"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 

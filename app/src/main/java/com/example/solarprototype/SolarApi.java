@@ -67,6 +67,8 @@ public class SolarApi {
         @GET("systems/{system_id}/summary")  //@GET("systems/"+system_id+"/summary")
         Call<SummaryOfDay> getSummaryOfToday(@Path(value = "system_id") String systemid, @Query("summary_date") String curdate, @Query("key") String apikey, @Query("user_id") String user_id);
 
+
+        // Used for both Weekly and monthly values
         @GET("systems/{system_id}/energy_lifetime")  //@GET("systems/"+system_id+"/energy_lifetime")
         Call<WeeklyValues> getValuesofWeek(@Path(value = "system_id") String systemid,@Query("start_date") String startdate, @Query("end_date") String enddate, @Query("key") String apikey, @Query("user_id") String user_id);
 
