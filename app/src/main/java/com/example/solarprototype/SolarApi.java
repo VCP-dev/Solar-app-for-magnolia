@@ -39,14 +39,13 @@ public class SolarApi {
 */
 
 
-
-
     public static PostService postService = null;
 
     public static PostService getService()
     {
         if(postService == null)
         {
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(MainActivity.returnapivalue("url",MainActivity.MainActivityContext))//(url)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -57,6 +56,9 @@ public class SolarApi {
         }
         return postService;
     }
+
+
+
 
 
 

@@ -41,6 +41,7 @@ import com.example.solarprototype.SplashScreenActivity;
 import com.example.solarprototype.StoredValues;
 import com.example.solarprototype.SummaryOfDay;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;

@@ -97,7 +97,7 @@ public class MenuFragment extends Fragment {
         postData.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {
-                if(isAdded() && isVisible() && getUserVisibleHint()) {
+
                     PostData data = response.body();
 
                     List<System> systemlist = data.getSystems();
@@ -131,18 +131,45 @@ public class MenuFragment extends Fragment {
                     } else {
                         call.cancel();
                     }
-                }
-                else
-                {
-                    ///   cancel the request
-                }
+
             }
 
             @Override
             public void onFailure(Call<PostData> call, Throwable t) {
+                if(call.isCanceled()){
+                    // call cancelled
+                }
+                else{
                     Toast.makeText(context, "Error occured", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+
+
+        new Callback<PostData>()
+        {
+            @Override
+            public void onResponse(Call<PostData> call,Response<PostData> responsebody)
+            {
+
+            }
+
+            @Override
+            public void onFailure(Call<PostData> call, Throwable t)
+            {
+                if(call.isCanceled())
+                {
+
+                }
+                else
+                {
+                    Toast.makeText(context, "Error occured", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+
 
     }
 
