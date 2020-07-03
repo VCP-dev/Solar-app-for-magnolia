@@ -97,46 +97,50 @@ public class MenuFragment extends Fragment {
         postData.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {
-                PostData data = response.body();
+                if(isAdded() && isVisible() && getUserVisibleHint()) {
+                    PostData data = response.body();
 
-                List<System> systemlist = data.getSystems();
+                    List<System> systemlist = data.getSystems();
 
-                ArrayList<String> datalist = new ArrayList<String>();
+                    ArrayList<String> datalist = new ArrayList<String>();
 
-                for(System s:systemlist)
+                    for (System s : systemlist) {
+                        datalist.add("System ID: " + s.getSystemId());
+                        datalist.add(s.getSystemName());
+                        int i = 0;
+                        listItems[i++] = "System public name: " + s.getSystemPublicName();
+                        StoredValues.systempublicname = "System public name: " + s.getSystemPublicName();
+                        listItems[i++] = "Timezone: " + s.getTimezone();
+                        StoredValues.timezone = "Timezone: " + s.getTimezone();
+                        listItems[i++] = "Country: " + s.getCountry();
+                        StoredValues.country = "Country: " + s.getCountry();
+                        listItems[i++] = "State: " + s.getState();
+                        StoredValues.state = "State: " + s.getState();
+                        listItems[i++] = "City: " + s.getCity();
+                        StoredValues.city = "City: " + s.getCity();
+                        listItems[i] = "Postal Code: " + s.getPostalCode();
+                        StoredValues.Postalcode = "Postal Code: " + s.getPostalCode();
+                    }
+                    if (getContext() != null) {
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, listItems);
+                        menulist.setAdapter(arrayAdapter);
+                        sysname.setText(datalist.get(1));
+                        sysid.setText(datalist.get(0));
+                        StoredValues.systemname = datalist.get(1);
+                        StoredValues.systemID = datalist.get(0);
+                    } else {
+                        call.cancel();
+                    }
+                }
+                else
                 {
-                    datalist.add("System ID: "+s.getSystemId());
-                    datalist.add(s.getSystemName());
-                    int i=0;
-                    listItems[i++]="System public name: "+s.getSystemPublicName();
-                    StoredValues.systempublicname = "System public name: "+s.getSystemPublicName();
-                    listItems[i++]="Timezone: "+s.getTimezone();
-                    StoredValues.timezone = "Timezone: "+s.getTimezone();
-                    listItems[i++]="Country: "+s.getCountry();
-                    StoredValues.country = "Country: "+s.getCountry();
-                    listItems[i++]="State: "+s.getState();
-                    StoredValues.state = "State: "+s.getState();
-                    listItems[i++]="City: "+s.getCity();
-                    StoredValues.city = "City: "+s.getCity();
-                    listItems[i]="Postal Code: "+s.getPostalCode();
-                    StoredValues.Postalcode = "Postal Code: "+s.getPostalCode();
-                }
-                if(getContext()!=null) {
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, listItems);
-                    menulist.setAdapter(arrayAdapter);
-                    sysname.setText(datalist.get(1));
-                    sysid.setText(datalist.get(0));
-                    StoredValues.systemname = datalist.get(1);
-                    StoredValues.systemID = datalist.get(0);
-                }
-                else{
-                    call.cancel();
+                    ///   cancel the request
                 }
             }
 
             @Override
             public void onFailure(Call<PostData> call, Throwable t) {
-                Toast.makeText(context, "Error occured", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Error occured", Toast.LENGTH_SHORT).show();
             }
         });
 

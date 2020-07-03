@@ -98,6 +98,10 @@ public class StatusFragment extends Fragment {
 
 
 
+    Boolean energyupdatebuttonpressed;
+
+
+
     public static final int REQUEST_CODE = 11;    ///  Used to identify the result
 
     private OnFragmentInteractionListener mListener;
@@ -235,6 +239,7 @@ public class StatusFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_status,container,false);
 
+        energyupdatebuttonpressed = false;
 
         currentdate = v.findViewById(R.id.currentdate);
         energyproduced = v.findViewById(R.id.energyproduced);
@@ -274,7 +279,9 @@ public class StatusFragment extends Fragment {
 
         oldColors = energyproduced.getTextColors();
 
-        updatebutton.setSupportBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5904A0")));
+        //updatebutton.setSupportBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5904A0")));
+
+        updatebutton.setSupportBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0BA8DA")));
 
         final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
 
@@ -322,48 +329,53 @@ public class StatusFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                if(energyupdatebuttonpressed==false)
+                {
+                    energyupdatebuttonpressed = true;
 
-                sysstatus.setTextColor(oldColors);
-                sysstatus.setText("Retrieving system status....");
-
-
-
-                energyproduced.setText("Retrieving details....");
-                unitsperkwp.setText("Retrieving details....");
-                energyproduced.setTextColor(oldColors);                         ///  for curent day
-                unitsperkwp.setTextColor(oldColors);
-                energyproduced.setTextSize(14);
-                unitsperkwp.setTextSize(14);
+                    sysstatus.setTextColor(oldColors);
+                    sysstatus.setText("Retrieving system status....");
 
 
 
-                energyproducedyesterday.setText("Retrieving details....");
-                unitsperkwpyesterday.setText("Retrieving details....");
-                energyproducedyesterday.setTextColor(oldColors);                          ///  for yesterday
-                unitsperkwpyesterday.setTextColor(oldColors);
-                energyproducedyesterday.setTextSize(14);
-                unitsperkwpyesterday.setTextSize(14);
+                    energyproduced.setText("Retrieving details....");
+                    unitsperkwp.setText("Retrieving details....");
+                    energyproduced.setTextColor(oldColors);                         ///  for curent day
+                    unitsperkwp.setTextColor(oldColors);
+                    energyproduced.setTextSize(14);
+                    unitsperkwp.setTextSize(14);
 
 
 
-                energyproducedthismonth.setText("Retrieving details....");
-                unitsperkwpthismonth.setText("Retrieving details....");
-                energyproducedthismonth.setTextColor(oldColors);                          ///  for this month
-                unitsperkwpthismonth.setTextColor(oldColors);
-                energyproducedthismonth.setTextSize(14);
-                unitsperkwpthismonth.setTextSize(14);
+                    energyproducedyesterday.setText("Retrieving details....");
+                    unitsperkwpyesterday.setText("Retrieving details....");
+                    energyproducedyesterday.setTextColor(oldColors);                          ///  for yesterday
+                    unitsperkwpyesterday.setTextColor(oldColors);
+                    energyproducedyesterday.setTextSize(14);
+                    unitsperkwpyesterday.setTextSize(14);
 
 
 
-                energyproducedlastmonth.setText("Retrieving details....");
-                unitsperkwplastmonth.setText("Retrieving details....");
-                energyproducedlastmonth.setTextColor(oldColors);                         ///  for last month
-                unitsperkwplastmonth.setTextColor(oldColors);
-                energyproducedlastmonth.setTextSize(14);
-                unitsperkwplastmonth.setTextSize(14);
+                    energyproducedthismonth.setText("Retrieving details....");
+                    unitsperkwpthismonth.setText("Retrieving details....");
+                    energyproducedthismonth.setTextColor(oldColors);                          ///  for this month
+                    unitsperkwpthismonth.setTextColor(oldColors);
+                    energyproducedthismonth.setTextSize(14);
+                    unitsperkwpthismonth.setTextSize(14);
 
 
-                getvaluesfortwomonths(getContext(),frontpagedetails.firstmonth.get(0),StoredValues.Todaysdate);
+
+                    energyproducedlastmonth.setText("Retrieving details....");
+                    unitsperkwplastmonth.setText("Retrieving details....");
+                    energyproducedlastmonth.setTextColor(oldColors);                         ///  for last month
+                    unitsperkwplastmonth.setTextColor(oldColors);
+                    energyproducedlastmonth.setTextSize(14);
+                    unitsperkwplastmonth.setTextSize(14);
+
+
+                    getvaluesfortwomonths(getContext(),frontpagedetails.firstmonth.get(0),StoredValues.Todaysdate);
+                }
+
             }
         });
 
@@ -477,11 +489,11 @@ public class StatusFragment extends Fragment {
 
 
 
-                    float todaysvalue =(float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1))/1000.0f;
-                    Integer tk = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) / 1000;
-                    Integer tr = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) % 1000;
+                    float todaysvalue =(float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2))/1000.0f;
+                    Integer tk = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) / 1000;
+                    Integer tr = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) % 1000;
                     String todaysvaluestring = tk+"."+tr;                                              ////   energy produced today
-                    float todayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) / 49.7f;
+                    float todayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) / 49.7f;
                     int tka = (int)todayavgvalue/1000;
                     int tra = (int)todayavgvalue%1000;
                     String todaysavgvaluestring = tka + "." + tra;                                     ////   units per kwp today
@@ -492,11 +504,11 @@ public class StatusFragment extends Fragment {
 
 
 
-                    float yesterdaysvalue =(float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2))/1000.0f;
-                    Integer yk = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) / 1000;
-                    Integer yr = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) % 1000;
+                    float yesterdaysvalue =(float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1))/1000.0f;
+                    Integer yk = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) / 1000;
+                    Integer yr = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) % 1000;
                     String yesterdaysvaluestring = yk+"."+yr;                                           ////   energy produced yesterday
-                    float yesterdayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-2) / 49.7f;
+                    float yesterdayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size()-1) / 49.7f;
                     int yka = (int)yesterdayavgvalue/1000;
                     int yra = (int)yesterdayavgvalue%1000;
                     String yesterdaysavgvaluestring = yka + "." + yra;                                  ////   units per kwp yesterday
@@ -535,9 +547,13 @@ public class StatusFragment extends Fragment {
                     unitsperkwplastmonth.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     unitsperkwplastmonth.setTextColor(Color.parseColor("#000000"));
 
+
+                    energyupdatebuttonpressed = false;
+
                 }
                 else
                 {
+                    energyupdatebuttonpressed = false;
                     Dialog dialog = new Dialog(getContext());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.noresponsedialog_design);
@@ -551,6 +567,7 @@ public class StatusFragment extends Fragment {
 
             @Override
             public void onFailure(Call<WeeklyValues> call, Throwable t) {
+                energyupdatebuttonpressed = false;
                 Snackbar.make(getView(),"Error in receiving values please check internet connection",Snackbar.LENGTH_SHORT).setAction("Action",null).show();
             }
         });

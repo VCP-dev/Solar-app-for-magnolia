@@ -16,6 +16,7 @@
 
 
                 <TextView
+                    android:textStyle="bold"
                     android:paddingTop="5dp"
                     android:textColor="#fff"
                     android:text="Solar app for Magnolia"
@@ -28,16 +29,21 @@
         </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.tabs.TabLayout
-            android:visibility="gone"
+
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.google.android.material.tabs.TabItem
+                android:text="hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+           <!-- <com.google.android.material.tabs.TabItem
                 android:text="week"
 
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"/> -->
 
             <com.google.android.material.tabs.TabItem
                 android:text="month"
@@ -83,7 +89,7 @@
 
         <Button
             android:id="@+id/setweekbutton"
-            android:text="Select Desired Month"
+            android:text="Select Desired Day"
             android:textColor="#FFFFFF"
             android:layout_margin="22dp"
             android:background="@drawable/button_background"

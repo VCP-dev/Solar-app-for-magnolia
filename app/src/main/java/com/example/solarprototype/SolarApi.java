@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.example.solarprototype.Fragments.StatusFragment;
+import com.example.solarprototype.RequestedValues.HourlyValues;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
 
@@ -61,6 +62,10 @@ public class SolarApi {
 
     public interface PostService
     {
+        @GET("systems/{system_id}/stats")
+        Call<HourlyValues> getValuesOfEachHour(@Path(value = "system_id") String systemid, @Query("start_at") String starttime, @Query("end_at") String endtime, @Query("datetime_format") String format, @Query("user_id") String user_id, @Query("key") String apikey);
+
+
         @GET("systems")  //?key="+apikey+"&user_id="+user_id)
         Call<PostData> getPostData(@Query("key") String apikey,@Query("user_id") String user_id);
 

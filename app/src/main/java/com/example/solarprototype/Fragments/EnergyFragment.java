@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,15 +22,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.WeeklyDetails;
+import com.example.solarprototype.BarChartOperations.hourlydetails;
 import com.example.solarprototype.BarChartOperations.monthlydetails;
 import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.R;
+import com.example.solarprototype.RequestedValues.HourlyValues;
+import com.example.solarprototype.RequestedValues.Interval;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
 import com.example.solarprototype.SolarApi;
 import com.example.solarprototype.SplashScreenActivity;
@@ -47,12 +53,14 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -99,6 +107,7 @@ public class EnergyFragment extends Fragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // check for the results
@@ -112,12 +121,19 @@ public class EnergyFragment extends Fragment {
             // set the values
             switch(selectweek.getText().toString())
             {
-                case "Select Desired Week":
-                    createWeekBarGraph("Weekly analysis",selectedDate);
+
+                case "Select Desired Day":
+                    createhourlygraph("Hourly analysis",selectedDate);
                     break;
+
+                /*case "Select Desired Week":
+                    createWeekBarGraph("Weekly analysis",selectedDate);
+                    break;*/
+
                 case "Select Desired Month":
                     createMonthBargraph("Monthly analysis",selectedDate);
                     break;
+
                 default:
                     break;
             }
@@ -195,8 +211,16 @@ public class EnergyFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
 
-                float totalpowerproduced = totalvalue;
-                totalpower.setText("Power produced during entire "+(typeoftab(tabLayout.getSelectedTabPosition()))+" = "+totalpowerproduced + " kWh");//totalpower.setText("Total power produced : "+totalpowerproduced);
+                float totalpowerproduced; //= totalvalue;
+
+                    totalpowerproduced=totalvalue;
+
+                String name = typeoftab(tabLayout.getSelectedTabPosition());
+                if(name=="hour")
+                {
+                    name="day";
+                }
+                totalpower.setText("Power produced during entire "+(name)+" = "+totalpowerproduced + " kWh");//totalpower.setText("Total power produced : "+totalpowerproduced);
 
                 BarselectedY.setText("Details for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");//BarselectedY.setText("Data for "+barChart.getXAxis().getValues().get(e.getXIndex())+":");
 
@@ -268,8 +292,11 @@ public class EnergyFragment extends Fragment {
         switch (pos)
         {
             case 0:
-                res="week";
+                res="hour";
                 break;
+            /*case 0:
+                res="week";
+                break;*/
             case 1:
                 res="month";
                 break;
@@ -282,10 +309,14 @@ public class EnergyFragment extends Fragment {
         switch(pos)
         {
             case 0:
+                selectweek.setText("Select Desired Day");
+                selectweek.setVisibility(View.VISIBLE);
+                break;
+            /*case 0:
                 selectweek.setText("Select Desired Week");
                 selectweek.setVisibility(View.VISIBLE);
                 //     createWeekBarGraph("Weekly analysis",returncurrentdate());
-                break;
+                break;*/
             case 1:
                 selectweek.setText("Select Desired Month");
                 selectweek.setVisibility(View.VISIBLE);
@@ -304,6 +335,157 @@ public class EnergyFragment extends Fragment {
     }
 
 
+
+
+    /// hourly bar graph functions
+
+    //@RequiresApi(api = Build.VERSION_CODES.O)
+    public void createhourlygraph(String description, String date)
+    {
+
+            barChart.clear();
+            ArrayList<String> selecteddayhours = hourlydetails.hoursofdayepochfivemindiff(date);
+            String starttime = selecteddayhours.get(0);
+            String endtime;
+        /*int index = checkwithcurrenttime(selecteddayhours);
+        if(index!=-1)
+        {
+            endtime = selecteddayhours.get(index-1);
+        }
+        else
+        {*/
+            endtime = selecteddayhours.get(selecteddayhours.size() - 1);
+            //}
+            //Toast.makeText(getContext(), "starttime: " + starttime + " || endtime: " + endtime, Toast.LENGTH_LONG).show();
+            getHourlyValues(getContext(), description, starttime, endtime);
+
+        //Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void getHourlyValues(final Context context, String description, final String starttime, final String endtime)
+    {
+        Toast.makeText(context,"Making a request for values, please wait",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "starttime: " + starttime + " || endtime: " + endtime, Toast.LENGTH_LONG).show();
+        Call<HourlyValues> hourlyValues = SolarApi.getService().getValuesOfEachHour(MainActivity.returnapivalue("system_id",context),starttime,endtime,"iso8601",MainActivity.returnapivalue("user_id",context),MainActivity.returnapivalue("apikey",context));
+        final String descr = description;
+        hourlyValues.enqueue(new Callback<HourlyValues>() {
+            @Override
+            public void onResponse(Call<HourlyValues> call, Response<HourlyValues> response) {
+                if(response.body() instanceof HourlyValues)
+                {
+                    Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
+
+                    totalvalue = 0;
+
+                    HourlyValues values = response.body();
+
+                    //ArrayList<String> HourList = selecteddayhours;
+                    ArrayList<String> timelist = new ArrayList<>();
+
+                    barEntries = new ArrayList<>();
+
+                    List<Interval> selecteddayintervals = response.body().getIntervals();
+
+                    for(int i=0;i<selecteddayintervals.size();i++)
+                    {
+                          /////   display enwh divided by 1000
+                        try {
+                            float entryvalue = ((float) selecteddayintervals.get(i).getEnwh()) / 1000.0f;
+                            totalvalue += entryvalue;
+                            barEntries.add(new BarEntry(entryvalue, i));
+                            timelist.add(timeofday(selecteddayintervals.get(i).getEndAt()));
+                        }
+                        catch(Exception e)
+                        {
+                            Log.println(Log.ASSERT,"Caught exception:",e.getMessage().toString());
+                        }
+                    }
+
+                    BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
+                    BarData barData = new BarData(timelist, barDataSet);
+                    barChart.setData(barData);
+                    barChart.setDescription(descr);
+                    barChart.fitScreen();
+                    totalpower.setText("No data...");
+                    BarselectedY.setText("No date selected...");
+                    barselectedvalue.setText("No data...");
+                    Barselectedavgvalue.setText("No data...");
+
+                    Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data does not exist for selected Day...");
+                    dialog.show();
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HourlyValues> call, Throwable t) {
+                Toast.makeText(context,"Error occured, Could not get hourly values",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context,t.getMessage(),Toast.LENGTH_LONG).show();
+                Dialog dialog = new Dialog(getContext());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.noresponsedialog_design);
+
+                TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                noresponsetext.setText("Message:"+t.getMessage());
+                dialog.show();
+            }
+        });
+    }
+
+
+    /*
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    int checkwithcurrenttime(ArrayList<String> hoursofday)
+    {
+        //long currentepochsecond = Instant.now().getEpochSecond();
+        long currentepochsecond = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        int index=-1;
+        for(int i=0;i<hoursofday.size();i++)
+        {
+            if(currentepochsecond<Long.valueOf(hoursofday.get(i)))
+            {
+                index=i;
+                break;
+            }
+        }
+        return index;
+    }*/
+
+
+    /*
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    long converttoepoch(String unsplittime)
+    {
+        String[] arr = unsplittime.split("\\+");
+        String time = arr[0];
+        return Instant.parse(time).getEpochSecond();
+    }*/
+
+
+    String timeofday(String time)
+    {
+        String[] arr1 = time.split("\\+");
+        String[] arr2 = arr1[0].split("T");
+        return arr2[1];
+    }
+
+
+
+
+    /// weekly bar graph functions
+
+
     public void createWeekBarGraph(String description,String date)
     {
         barChart.clear();
@@ -317,12 +499,12 @@ public class EnergyFragment extends Fragment {
             enddate = selectedweek.get(selectedweek.size() - 1);
         }
         getWeeklyValues(getContext(),description,startdate,enddate);
-        Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
 
     private void getWeeklyValues(final Context context, String description, final String startdate, final String enddate)
     {
-        Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Making a request for values, please wait",Toast.LENGTH_SHORT).show();
         Call<WeeklyValues> weeklyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         final String descr = description;
         weeklyValues.enqueue(new Callback<WeeklyValues>() {
@@ -330,6 +512,8 @@ public class EnergyFragment extends Fragment {
             public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
 
                 if(response.body() instanceof WeeklyValues) {
+
+                    Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
 
                     totalvalue = 0;
 
@@ -370,6 +554,8 @@ public class EnergyFragment extends Fragment {
                     BarselectedY.setText("No date selected...");
                     barselectedvalue.setText("No data...");
                     Barselectedavgvalue.setText("No data...");
+
+                    Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -392,6 +578,11 @@ public class EnergyFragment extends Fragment {
     }
 
 
+
+    /// monthly bar graph functions
+
+
+
     public void createMonthBargraph(String description,String date)
     {
         barChart.clear();
@@ -405,12 +596,12 @@ public class EnergyFragment extends Fragment {
             enddate = selectedMonth.get(selectedMonth.size()-1);
         }
         getMonthlyValues(getContext(),description,startdate,enddate);
-        Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
 
     public void getMonthlyValues(final Context context, String description, final String startdate, final String enddate)
     {
-        Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Making a request for values, please wait",Toast.LENGTH_SHORT).show();
         final Call<WeeklyValues> monthlyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
         final String descr = description;
 
@@ -419,6 +610,8 @@ public class EnergyFragment extends Fragment {
             public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
 
                 if(response.body() instanceof WeeklyValues) {
+
+                    Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
 
                     totalvalue = 0;
 
@@ -459,6 +652,8 @@ public class EnergyFragment extends Fragment {
                     BarselectedY.setText("No date selected...");
                     barselectedvalue.setText("No data...");
                     Barselectedavgvalue.setText("No data...");
+
+                    Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -467,7 +662,7 @@ public class EnergyFragment extends Fragment {
                     dialog.setContentView(R.layout.noresponsedialog_design);
 
                     TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
-                    noresponsetext.setText("Data does not exist for selected Week.....");
+                    noresponsetext.setText("Data does not exist for selected month.....");
                     dialog.show();
                     return;
                 }
@@ -475,12 +670,15 @@ public class EnergyFragment extends Fragment {
 
             @Override
             public void onFailure(Call<WeeklyValues> call, Throwable t) {
-                Toast.makeText(context,"Error occured, Could not get weekly values",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Error occured, Could not get monthly values",Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
+
+
+    ///  base functions used for creating graphs
 
 
 
