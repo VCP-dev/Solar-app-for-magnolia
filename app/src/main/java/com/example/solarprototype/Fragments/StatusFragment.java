@@ -482,29 +482,57 @@ public class StatusFragment extends Fragment {
                         {
                             Log.println(Log.INFO,"Had to decrease i","Decreased i");
                             i=i-2;
-                            sumoflastmonth=sumoflastmonth-(ValuesofTwoMonths.get(i-1)+ValuesofTwoMonths.get(i-2));
+                            //sumoflastmonth=sumoflastmonth-(ValuesofTwoMonths.get(i-1)+ValuesofTwoMonths.get(i-2));
                             limitreached = false;
                         }
 
-                        Integer lmk = sumoflastmonth / 1000;
-                        Integer lmr = sumoflastmonth % 1000;
-                        String lastmonthvaluestring = lmk + "." + lmr;              ////  energy produced last month
-                        float lastmonthavgvalue = sumoflastmonth / 49.7f;
-                        int lmka = (int) lastmonthavgvalue / 1000;
-                        int lmra = (int) lastmonthavgvalue % 1000;
-                        String lastmonthavgvaluestring = lmka + "." + lmra;         ////   units per kwp last month
-                        StoredValues.energyproducedlastmonth = lastmonthvaluestring;
-                        StoredValues.unitsperkwplastmonth = lastmonthavgvaluestring;
-                        Log.println(Log.INFO,"First month","First month done i="+i);
+                        if(StoredValues.energyproducedlastmonth==null && StoredValues.unitsperkwplastmonth==null) {
+                            Integer lmk = sumoflastmonth / 1000;
+                            Integer lmr = sumoflastmonth % 1000;
+                            String lastmonthvaluestring = lmk + "." + lmr;              ////  energy produced last month
+                            float lastmonthavgvalue = sumoflastmonth / 49.7f;
+                            int lmka = (int) lastmonthavgvalue / 1000;
+                            int lmra = (int) lastmonthavgvalue % 1000;
+                            String lastmonthavgvaluestring = lmka + "." + lmra;         ////   units per kwp last month
+                            StoredValues.energyproducedlastmonth = lastmonthvaluestring;
+                            StoredValues.unitsperkwplastmonth = lastmonthavgvaluestring;
+                            Log.println(Log.INFO, "First month", "First month done i=" + i);
+                        }
+
 
                         Integer sumofthismonth = 0;
-                        for (/*int i = frontpagedetails.firstmonth.size()*/; i < totalsizeoftwomonths; i++) {
-                            try {
-                                sumofthismonth += (ValuesofTwoMonths.get(i));
-                            } catch (Exception ex) {
-                                Log.println(Log.ASSERT, "Caught exception:", ex.getMessage().toString());
-                            }
+                        if(StoredValues.energyproducedlastmonth==null && StoredValues.unitsperkwplastmonth==null){
+
+                            for (/*int i = frontpagedetails.firstmonth.size()*/; i < totalsizeoftwomonths; i++) {
+                                    try {
+                                        sumofthismonth += (ValuesofTwoMonths.get(i));
+                                    } catch (Exception ex) {
+                                  Log.println(Log.ASSERT, "Caught exception:", ex.getMessage().toString());
+                                   }
+                                }
                         }
+                        else{
+
+                            int j = frontpagedetails.firstmonth.size();
+                            Log.println(Log.INFO,"value of j","j="+j);
+                            Log.println(Log.INFO,"total length","length="+totalsizeoftwomonths);
+                            for (j = frontpagedetails.firstmonth.size(); j < totalsizeoftwomonths; j++) {
+                                try {
+                                    sumofthismonth += (ValuesofTwoMonths.get(j));
+                                } catch (Exception ex) {
+                                    Log.println(Log.ASSERT, "Caught exception:", ex.getMessage().toString());
+                                }
+                            }
+
+                        }
+
+                        //for (/*int i = frontpagedetails.firstmonth.size()*/; i < totalsizeoftwomonths; i++) {
+                        //    try {
+                        //        sumofthismonth += (ValuesofTwoMonths.get(i));
+                        //    } catch (Exception ex) {
+                        //   Log.println(Log.ASSERT, "Caught exception:", ex.getMessage().toString());
+                        //    }
+                        //}
                         Integer tmk = sumofthismonth / 1000;
                         Integer tmr = sumofthismonth % 1000;
                         String thismonthvaluestring = tmk + "." + tmr;              ////   energy produced this month
@@ -528,18 +556,18 @@ public class StatusFragment extends Fragment {
                         StoredValues.energyproducedtoday = todaysvaluestring;
                         StoredValues.unitsperkwptoday = todaysavgvaluestring;
 
-
-                        float yesterdaysvalue = (float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1)) / 1000.0f;
-                        Integer yk = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) / 1000;
-                        Integer yr = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) % 1000;
-                        String yesterdaysvaluestring = yk + "." + yr;                                           ////   energy produced yesterday
-                        float yesterdayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) / 49.7f;
-                        int yka = (int) yesterdayavgvalue / 1000;
-                        int yra = (int) yesterdayavgvalue % 1000;
-                        String yesterdaysavgvaluestring = yka + "." + yra;                                  ////   units per kwp yesterday
-                        StoredValues.energyproducedyesterday = yesterdaysvaluestring;
-                        StoredValues.unitsperkwpyesterday = yesterdaysavgvaluestring;
-
+                        if(StoredValues.energyproducedyesterday==null && StoredValues.unitsperkwpyesterday==null) {
+                            float yesterdaysvalue = (float) (ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1)) / 1000.0f;
+                            Integer yk = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) / 1000;
+                            Integer yr = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) % 1000;
+                            String yesterdaysvaluestring = yk + "." + yr;                                           ////   energy produced yesterday
+                            float yesterdayavgvalue = ValuesofTwoMonths.get(ValuesofTwoMonths.size() - 1) / 49.7f;
+                            int yka = (int) yesterdayavgvalue / 1000;
+                            int yra = (int) yesterdayavgvalue % 1000;
+                            String yesterdaysavgvaluestring = yka + "." + yra;                                  ////   units per kwp yesterday
+                            StoredValues.energyproducedyesterday = yesterdaysvaluestring;
+                            StoredValues.unitsperkwpyesterday = yesterdaysavgvaluestring;
+                        }
 
                         energyproduced.setText(StoredValues.energyproducedtoday);
                         unitsperkwp.setText(StoredValues.unitsperkwptoday);

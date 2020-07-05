@@ -25,42 +25,41 @@ public class frontpagedetails extends monthlydetails {
 
     public static void daysoftwomonths(String currentdate)
     {
-        Calendar startmonth = returncalendar(2020,Calendar.APRIL);
-        Calendar endmonth = returncalendar(2020,Calendar.APRIL);
-        ArrayList<String> daysOfMonth = new ArrayList<>();
-        Date date=null;
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(currentdate);
-        }
-        catch(ParseException e){
-            e.printStackTrace();
-        }
-        startmonth.setTime(date);
-        endmonth.setTime(date);
-        startmonth.set(Calendar.MONTH,startmonth.get(Calendar.MONTH)-1);
-        startmonth.set(Calendar.DAY_OF_MONTH, 1);
-        endmonth.set(Calendar.MONTH,endmonth.get(Calendar.MONTH));
-        endmonth.set(Calendar.DAY_OF_MONTH,1);
-        int firstmonthmaxDay = startmonth.getActualMaximum(Calendar.DAY_OF_MONTH);
-        int secondmonthmaxDay = endmonth.getActualMaximum(Calendar.DAY_OF_MONTH);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        if(firstmonth.size()<1 && secondmonth.size()<1) {
+            Calendar startmonth = returncalendar(2020, Calendar.APRIL);
+            Calendar endmonth = returncalendar(2020, Calendar.APRIL);
+            ArrayList<String> daysOfMonth = new ArrayList<>();
+            Date date = null;
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(currentdate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            startmonth.setTime(date);
+            endmonth.setTime(date);
+            startmonth.set(Calendar.MONTH, startmonth.get(Calendar.MONTH) - 1);
+            startmonth.set(Calendar.DAY_OF_MONTH, 1);
+            endmonth.set(Calendar.MONTH, endmonth.get(Calendar.MONTH));
+            endmonth.set(Calendar.DAY_OF_MONTH, 1);
+            int firstmonthmaxDay = startmonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int secondmonthmaxDay = endmonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-        for(int i=0;i<firstmonthmaxDay;i++)
-        {
-            startmonth.set(Calendar.DAY_OF_MONTH,i+1);
-            daysOfMonth.add(df.format(startmonth.getTime()));
+            for (int i = 0; i < firstmonthmaxDay; i++) {
+                startmonth.set(Calendar.DAY_OF_MONTH, i + 1);
+                daysOfMonth.add(df.format(startmonth.getTime()));
+            }
+
+            daysOfMonth.add("----------");
+
+            for (int i = 0; i < secondmonthmaxDay; i++) {
+                endmonth.set(Calendar.DAY_OF_MONTH, i + 1);
+                daysOfMonth.add(df.format(endmonth.getTime()));
+            }
+
+            separatemonths(daysOfMonth);
+            todayandyesterday(currentdate);
         }
-
-        daysOfMonth.add("----------");
-
-        for(int i=0;i<secondmonthmaxDay;i++)
-        {
-            endmonth.set(Calendar.DAY_OF_MONTH,i+1);
-            daysOfMonth.add(df.format(endmonth.getTime()));
-        }
-
-        separatemonths(daysOfMonth);
-        todayandyesterday(currentdate);
     }
 
 
