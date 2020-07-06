@@ -44,4 +44,8 @@ public class StoredValues {
 
     public static String unitsperkwplastmonth = null;
 
+    public static String energyproducedliftime = null;
+
+    public static String unitsperkwplifetime = null;
+
 }

@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 
 import com.example.solarprototype.Fragments.StatusFragment;
 import com.example.solarprototype.RequestedValues.HourlyValues;
+import com.example.solarprototype.RequestedValues.LifetimeValues;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
 
@@ -78,6 +79,10 @@ public class SolarApi {
         // Used for both Weekly and monthly values
         @GET("systems/{system_id}/energy_lifetime")  //@GET("systems/"+system_id+"/energy_lifetime")
         Call<WeeklyValues> getValuesofWeek(@Path(value = "system_id") String systemid,@Query("start_date") String startdate, @Query("end_date") String enddate, @Query("key") String apikey, @Query("user_id") String user_id);
+
+        // for finding total values over entire lifetime
+        @GET("systems/{system_id}/energy_lifetime")
+        Call<LifetimeValues> getLifetimeValues(@Path(value = "system_id") String systemid,@Query("key") String apikey, @Query("user_id") String user_id);
 
     }
 

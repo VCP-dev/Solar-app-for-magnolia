@@ -510,6 +510,118 @@
 
 
 
+
+
+                <!--fifth segment--><!--lifetime-->
+                <LinearLayout
+                    android:layout_margin="4dp"
+                    android:background="@drawable/textbackground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Details for lifetime of system :"
+                        android:textSize="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:padding="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:text="Energy produced :"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/energyproducedlifetime"
+                                android:text="No data ....."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="0.02"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- empty layout -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/textbackground"
+                            android:layout_weight="0.49"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:textColor="#000"
+                                android:textSize="14dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Units/kWp produced:"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:paddingLeft="3dp"
+                                android:layout_marginLeft="2dp"
+                                android:id="@+id/unitsperkwplifetime"
+                                android:text="No data ...."
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--end of fifth segment--><!--lifetime-->
+
+
+
+
+
             </LinearLayout>
             <!--end of layout which contains segments-->
 

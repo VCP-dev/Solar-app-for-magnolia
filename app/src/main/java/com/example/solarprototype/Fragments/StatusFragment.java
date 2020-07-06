@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.frontpagedetails;
 import com.example.solarprototype.MainActivity;
+import com.example.solarprototype.RequestedValues.LifetimeValues;
 import com.example.solarprototype.RequestedValues.PostData;
 import com.example.solarprototype.R;
 import com.example.solarprototype.RequestedValues.WeeklyValues;
@@ -80,6 +81,10 @@ public class StatusFragment extends Fragment {
     TextView energyproducedlastmonth;
     TextView unitsperkwplastmonth;
 
+
+    TextView energyproducedlifetime;
+    TextView unitsperkwplifetime;
+
     Button getdetails;
     Button changedate;
 
@@ -92,7 +97,7 @@ public class StatusFragment extends Fragment {
     String date;
 
 
-    String returnedvaluestatus,returnedvalueenergyproduced,returnedvalueunitsperkwp,returnedenergyproducedyesterday,returnedunitsperkwpyesterday,returnedenergyproducedthismonth,returnedunitsperkwpthismonth,returnedenergyproducedlastmonth,returnedunitsperkwplastmonth;
+    String returnedvaluestatus,returnedenergyproducedlifetime,returnedunitsperkwplifetime,returnedvalueenergyproduced,returnedvalueunitsperkwp,returnedenergyproducedyesterday,returnedunitsperkwpyesterday,returnedenergyproducedthismonth,returnedunitsperkwpthismonth,returnedenergyproducedlastmonth,returnedunitsperkwplastmonth;
 
     Boolean valuespresent;
 
@@ -127,7 +132,7 @@ public class StatusFragment extends Fragment {
 
     }
 
-    public StatusFragment(String status,String energyproducedtoday,String unitsperkwptoday,String energyproducedyesterday,String unitsperkwpyesterday,String energyproducedthismonth,String unitsperkwpthismonth,String energyproducedlastmonth,String unitsperkwplastmonth)
+    public StatusFragment(String status,String energyproducedtoday,String unitsperkwptoday,String energyproducedyesterday,String unitsperkwpyesterday,String energyproducedthismonth,String unitsperkwpthismonth,String energyproducedlastmonth,String unitsperkwplastmonth,String energyproducedlifetime,String unitsperkwplifetime)
     {
         if(status!=null)
         {
@@ -173,6 +178,16 @@ public class StatusFragment extends Fragment {
         {
             returnedunitsperkwplastmonth = unitsperkwplastmonth;
             valuespresent = true;
+        }
+        if(energyproducedlifetime!=null)
+        {
+            returnedenergyproducedlifetime = energyproducedlifetime;
+            valuespresent = true;
+        }
+        if(unitsperkwplifetime!=null)
+        {
+            returnedunitsperkwplifetime = unitsperkwplifetime;
+            valuespresent=true;
         }
         else
         {
@@ -266,6 +281,9 @@ public class StatusFragment extends Fragment {
         energyproducedlastmonth = v.findViewById(R.id.energyproducedlastmonth);
         unitsperkwplastmonth = v.findViewById(R.id.unitsperkwplastmonth);
 
+        energyproducedlifetime = v.findViewById(R.id.energyproducedlifetime);
+        unitsperkwplifetime = v.findViewById(R.id.unitsperkwplifetime);
+
         //getdetails = v.findViewById(R.id.getbutton);
         //changedate = v.findViewById(R.id.datebutton);
 
@@ -329,6 +347,14 @@ public class StatusFragment extends Fragment {
             unitsperkwplastmonth.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
             unitsperkwplastmonth.setTextColor(Color.parseColor("#000000"));
 
+
+            energyproducedlifetime.setText(returnedenergyproducedlastmonth);
+            energyproducedlifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            energyproducedlifetime.setTextColor(Color.parseColor("#000000"));               ///    for lifetime
+            unitsperkwplifetime.setText(returnedunitsperkwplastmonth);
+            unitsperkwplifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            unitsperkwplifetime.setTextColor(Color.parseColor("#000000"));
+
         }
 
 
@@ -379,6 +405,14 @@ public class StatusFragment extends Fragment {
                     unitsperkwplastmonth.setTextColor(oldColors);
                     energyproducedlastmonth.setTextSize(14);
                     unitsperkwplastmonth.setTextSize(14);
+
+
+                    energyproducedlifetime.setText("Retrieving details....");
+                    unitsperkwplifetime.setText("Retrieving details....");
+                    energyproducedlifetime.setTextColor(oldColors);                         ///  for lifetime
+                    unitsperkwplifetime.setTextColor(oldColors);
+                    energyproducedlifetime.setTextSize(14);
+                    unitsperkwplifetime.setTextSize(14);
 
 
                     getvaluesfortwomonths(getContext(),frontpagedetails.firstmonth.get(0),StoredValues.Todaysdate);
@@ -438,6 +472,68 @@ public class StatusFragment extends Fragment {
         return v;
 
     }
+
+
+
+    public void getlifetimevalues(final Context context)
+    {
+        final Call<LifetimeValues> lifetimeValues = SolarApi.getService().getLifetimeValues(MainActivity.returnapivalue("system_id",context),MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
+
+        lifetimeValues.enqueue(new Callback<LifetimeValues>() {
+            @Override
+            public void onResponse(Call<LifetimeValues> call, Response<LifetimeValues> response) {
+                LifetimeValues lifetimeValues = response.body();
+
+                String systemstatus = lifetimeValues.getMeta().getStatus();
+
+                List<Integer> Values = lifetimeValues.getProduction();
+
+                Integer totallifetimevalue = 0;
+
+                for(int k=0;k<Values.size();k++)
+                {
+                    totallifetimevalue+=Values.get(k);
+                }
+
+                Integer lk = totallifetimevalue / 1000;
+                Integer lr = totallifetimevalue % 1000;
+                String lifetimevaluestring = lk + "." + lr;              ////   energy produced during lifetime
+                float thismonthavgvalue = totallifetimevalue / 49.7f;
+                int tmka = (int) thismonthavgvalue / 1000;
+                int tmra = (int) thismonthavgvalue % 1000;
+                String lifetimeavgvaluestring = tmka + "." + tmra;         ////   units per kwp during lifetime
+                StoredValues.energyproducedliftime = lifetimevaluestring;
+                StoredValues.unitsperkwplifetime = lifetimeavgvaluestring;
+
+
+
+                if(systemstatus.contentEquals("normal"))
+                {
+                    sysstatus.setTextColor(Color.parseColor("#2AE016"));
+                }
+
+                sysstatus.setText("System status: "+systemstatus);
+                StoredValues.SystemStatus ="System status: "+systemstatus;
+
+                energyproducedlifetime.setText(StoredValues.energyproducedliftime);
+                unitsperkwplifetime.setText(StoredValues.unitsperkwplifetime);
+                energyproducedlifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                energyproducedlifetime.setTextColor(Color.parseColor("#000000"));
+                unitsperkwplifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                unitsperkwplifetime.setTextColor(Color.parseColor("#000000"));
+
+
+            }
+
+            @Override
+            public void onFailure(Call<LifetimeValues> call, Throwable t) {
+                Snackbar.make(getView(),"Error in receiving values please check internet connection",Snackbar.LENGTH_SHORT).setAction("Action",null).show();
+            }
+        });
+    }
+
+
+
 
 
     public void getvaluesfortwomonths(final Context context,String startdate, String enddate)
@@ -670,7 +766,9 @@ public class StatusFragment extends Fragment {
                 Snackbar.make(getView(),"Error in receiving values please check internet connection",Snackbar.LENGTH_SHORT).setAction("Action",null).show();
             }
         });
-        getdata(context);
+        //getdata(context);
+
+        getlifetimevalues(context);
     }
 
 
