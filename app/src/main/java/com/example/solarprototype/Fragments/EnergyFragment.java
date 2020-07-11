@@ -2,6 +2,7 @@ package com.example.solarprototype.Fragments;
 
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +29,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.WeeklyDetails;
 import com.example.solarprototype.BarChartOperations.hourlydetails;
 import com.example.solarprototype.BarChartOperations.monthlydetails;
+import com.example.solarprototype.BarChartOperations.yearlydetails;
 import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.R;
 import com.example.solarprototype.RequestedValues.HourlyValues;
@@ -57,6 +63,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -83,6 +90,14 @@ public class EnergyFragment extends Fragment {
     TextView Barselectedavgvalue;
     TextView BarselectedY;
     TextView totalpower;
+
+
+    Spinner monthselector;
+    Spinner yearselector;
+
+
+    public static final String tag = "EnergyFragment";
+
 
 
     float totalvalue;
@@ -123,17 +138,17 @@ public class EnergyFragment extends Fragment {
             switch(selectweek.getText().toString())
             {
 
-                case "Select Desired Day":
-                    createhourlygraph("Hourly analysis",selectedDate);
+                case "Generate graph for Desired Day":
+                    createhourlygraph("Hourly analysis of "+selectedDate,selectedDate);
                     break;
 
                 /*case "Select Desired Week":
                     createWeekBarGraph("Weekly analysis",selectedDate);
                     break;*/
 
-                case "Select Desired Month":
+               /* case "Select Desired Month":
                     createMonthBargraph("Monthly analysis",selectedDate);
-                    break;
+                    break;*/
 
                 default:
                     break;
@@ -193,12 +208,19 @@ public class EnergyFragment extends Fragment {
         Barselectedavgvalue = v.findViewById(R.id.barselectedavgvalue);
         BarselectedY = v.findViewById(R.id.barselectedY);
 
+        monthselector = v.findViewById(R.id.spinnermonth);
+        yearselector = v.findViewById(R.id.spinneryear);
+
         barChart = v.findViewById(R.id.barchart);
         barChart.setScaleEnabled(true);
         barChart.setDragEnabled(true);
         barChart.setTouchEnabled(true);
         barChart.setPinchZoom(false);
         barChart.setDoubleTapToZoomEnabled(false);
+
+
+        monthselector.setVisibility(View.GONE);
+        yearselector.setVisibility(View.GONE);
 
         final FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
 
@@ -273,11 +295,84 @@ public class EnergyFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                switch (typeoftab(tabLayout.getSelectedTabPosition()))
+                {
+                    case "hour":
+                       {
+                           AppCompatDialogFragment newFragment = new DatePickerFragment();
+                           // set the targetFragment to receive the results, specifying the request code
+                           newFragment.setTargetFragment(EnergyFragment.this,EnergyREQUEST_CODE);
+                           // show the datePicker
+                           newFragment.show(fm, "datePicker");
+
+                       }
+                        break;
+                    case "month":
+                       {
+                           String month = monthselector.getSelectedItem().toString();
+                           String year = yearselector.getSelectedItem().toString();
+                           String date = year+"-"+monthnumber(month)+"-"+"02";
+
+                           createMonthBargraph("Monthly analysis of "+month+" "+year,date);
+
+                       }
+                        break;
+                    case "year":
+                       {
+
+                           //DatePickerDialog dialog = new DatePickerDialog(EnergyFragment.this);
+                           int year = Integer.parseInt(yearselector.getSelectedItem().toString());
+                           String startdate,endate;
+
+
+                           if(year == Integer.parseInt(MainActivity.returnapivalue("system start year",getContext())))    ///    for starting year of system
+                           {
+                               startdate = MainActivity.returnapivalue("system start date",getContext());
+
+                               ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+
+                               endate = yeardates.get(yeardates.size()-2);
+
+                               createyearlygraph("analysis of "+year,startdate,endate,yeardates);
+
+                               //Toast.makeText(getContext(), "starting year of system", Toast.LENGTH_SHORT).show();
+                           }
+                           else if(year==Calendar.getInstance().get(Calendar.YEAR))       ///      for current year
+                           {
+                               ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+                               startdate = yeardates.get(0);
+                               endate = returncurrentdate();
+
+                               createyearlygraph("analysis of "+year,startdate,endate,yeardates);
+
+                               //Toast.makeText(getContext(), "Current year", Toast.LENGTH_SHORT).show();
+                           }
+                           else      ///     any other year
+                           {
+
+                               ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+                               startdate = yeardates.get(0);
+                               endate = yeardates.get(yeardates.size()-2);
+
+                               createyearlygraph("analysis of "+year,startdate,endate,yeardates);
+
+                               //Toast.makeText(getContext(), "Some other year", Toast.LENGTH_SHORT).show();
+                           }
+
+                       }
+                        break;
+                }
+
+                /*
                 AppCompatDialogFragment newFragment = new DatePickerFragment();
                 // set the targetFragment to receive the results, specifying the request code
                 newFragment.setTargetFragment(EnergyFragment.this,EnergyREQUEST_CODE);
                 // show the datePicker
                 newFragment.show(fm, "datePicker");
+                */
 
             }
         });
@@ -285,6 +380,51 @@ public class EnergyFragment extends Fragment {
 
         return v;
 
+    }
+
+    public String monthnumber(String month)
+    {
+        String monthnum = null;
+        switch(month)
+        {
+            case "Jan":
+                monthnum = "01";
+                break;
+            case "Feb":
+                monthnum = "02";
+                break;
+            case "March":
+                monthnum = "03";
+                break;
+            case "April":
+                monthnum = "04";
+                break;
+            case "May":
+                monthnum = "05";
+                break;
+            case "June":
+                monthnum = "06";
+                break;
+            case "July":
+                monthnum = "07";
+                break;
+            case "Aug":
+                monthnum = "08";
+                break;
+            case "Sep":
+                monthnum = "09";
+                break;
+            case "Oct":
+                monthnum = "10";
+                break;
+            case "Nov":
+                monthnum = "11";
+                break;
+            case "Dec":
+                monthnum = "12";
+                break;
+        }
+        return monthnum;
     }
 
     private String typeoftab(int pos)
@@ -301,17 +441,23 @@ public class EnergyFragment extends Fragment {
             case 1:
                 res="month";
                 break;
+
+            case 2:
+                res="year";
+                break;
         }
         return res;
     }
 
     private void changegraph(int pos)
     {
+
         switch(pos)
         {
             case 0:
-                selectweek.setText("Select Desired Day");
+                selectweek.setText("Generate graph for Desired Day");
                 selectweek.setVisibility(View.VISIBLE);
+                setspinners(false,false);
                 break;
             /*case 0:
                 selectweek.setText("Select Desired Week");
@@ -319,9 +465,16 @@ public class EnergyFragment extends Fragment {
                 //     createWeekBarGraph("Weekly analysis",returncurrentdate());
                 break;*/
             case 1:
-                selectweek.setText("Select Desired Month");
+                selectweek.setText("Generate graph for Desired Month");
                 selectweek.setVisibility(View.VISIBLE);
+                setspinners(true,true);
                 //     createMonthBargraph("Monthly analysis",returncurrentdate());
+                break;
+
+            case 2:
+                selectweek.setText("Generate graph for Desired Year");
+                selectweek.setVisibility(View.VISIBLE);
+                setspinners(false,true);
                 break;
             /*case 2:
                 createRandomBarGraph("2020/05/01","2020/05/13","Yearly analysis");
@@ -338,7 +491,8 @@ public class EnergyFragment extends Fragment {
 
 
 
-    /// hourly bar graph functions
+    ///  --------------------------------  hourly bar graph functions  --------------------------------
+
 
     //@RequiresApi(api = Build.VERSION_CODES.O)
     public void createhourlygraph(String description, String date)
@@ -484,7 +638,9 @@ public class EnergyFragment extends Fragment {
 
 
 
-    /// weekly bar graph functions
+
+
+    ///   --------------------------------   weekly bar graph functions   --------------------------------
 
 
     public void createWeekBarGraph(String description,String date)
@@ -580,7 +736,7 @@ public class EnergyFragment extends Fragment {
 
 
 
-    /// monthly bar graph functions
+    ///   --------------------------------   monthly bar graph functions   --------------------------------
 
 
 
@@ -679,7 +835,184 @@ public class EnergyFragment extends Fragment {
 
 
 
-    ///  base functions used for creating graphs
+
+
+
+    ///   --------------------------------   yearly bar graph functions   --------------------------------
+
+
+
+    public void createyearlygraph(String description,String startdate,String enddate,ArrayList<String> yeardates)
+    {
+        barChart.clear();
+        getyearlyvalues(getContext(),description,startdate,enddate,yeardates);
+    }
+
+
+    public void getyearlyvalues(final Context context, String description, final String startdate, final String enddate, final ArrayList<String> yeardates)
+    {
+        Toast.makeText(context,"Making a request for values, please wait",Toast.LENGTH_SHORT).show();
+        final Call<WeeklyValues> yearlyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
+        final String descr = description;
+
+        yearlyValues.enqueue(new Callback<WeeklyValues>() {
+            @Override
+            public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
+
+                if(response.body() instanceof WeeklyValues) {
+
+                    Toast.makeText(context,"Receiving values and creating graph.....",Toast.LENGTH_SHORT).show();
+
+                    WeeklyValues values = response.body();
+
+                    totalvalue = 0;
+
+                    List<Integer> valuesforgivenyear = values.getProduction();
+
+                    String[] arrayofmonths = {"Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
+
+                    ArrayList<String> months = converttoarrayliststring(arrayofmonths);
+
+                    ArrayList<Float> valuesforeachmonthinyear = converttoarraylistfloat(new float[]{0,0,0,0,0,0,0,0,0,0,0,0});
+
+                    barEntries = new ArrayList<>();
+
+
+                    float totalformonth=0;
+
+                    int i=0;
+
+                    int j=startingmonth(startdate);
+
+                    if(j!=0)         //// for the starting year in which the preceeding months had no power generation
+                    {
+                        for (int k = 0; k < j; k++) {
+                            barEntries.add(new BarEntry(0, k));
+                        }
+                    }
+
+
+                    for (String date : yeardates)         // using yeardates separate the values obtained into each month dividing by ---
+                    {
+
+
+                            if (date == "---") {
+                                try {
+                                    valuesforeachmonthinyear.set(j, totalformonth);
+                                    barEntries.add(new BarEntry(valuesforeachmonthinyear.get(j), j));
+                                    j += 1;
+                                    totalvalue += totalformonth;
+                                    totalformonth = 0;
+                                } catch (Exception ex) {
+                                    Log.println(Log.ASSERT, "value of j", "j=" + j);
+                                }
+                            } else {
+                                try {
+                                    totalformonth += valuesforgivenyear.get(i) / 1000f;
+                                } catch (Exception ex) {
+                                    Log.println(Log.ASSERT, "value of i", "i=" + i);
+                                    Log.println(Log.ASSERT, "during adding values", ex.getMessage());
+                                }
+                                i += 1;
+                            }
+
+                    }
+
+
+
+                    BarDataSet barDataSet = new BarDataSet(barEntries, "Months");
+
+                    BarData barData = new BarData(months, barDataSet);
+
+
+                    barChart.setData(barData);
+                    barChart.setDescription(descr);
+                    barChart.fitScreen();
+                    totalpower.setText("No data...");
+                    BarselectedY.setText("No date selected...");
+                    barselectedvalue.setText("No data...");
+                    Barselectedavgvalue.setText("No data...");
+
+                    Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
+
+
+                }
+                else{
+
+                    ///   this portion of code should technically never occur but just in case, to check if the object recieved isn't of the required type
+
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data does not exist for selected year.....");
+                    dialog.show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyValues> call, Throwable t) {
+                Toast.makeText(context,"Error occured, Could not get yearly values",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    ArrayList<Float> converttoarraylistfloat(float arr[])
+    {
+        ArrayList<Float> array_list = new ArrayList<Float>();
+
+        for(int i=0;i<arr.length;i++)
+        {
+            array_list.add(arr[i]);
+        }
+
+        return array_list;
+    }
+
+
+    ArrayList<String> converttoarrayliststring(String arr[])
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        for(int i=0;i<arr.length;i++)
+        {
+            array_list.add(arr[i]);
+        }
+
+        return array_list;
+    }
+
+    int startingmonth(String startingdate)
+    {
+        Date startdate=null;
+        try {
+            startdate = new SimpleDateFormat("yyyy-MM-dd").parse(startingdate);
+        }
+        catch (Exception ex){
+
+        }
+        Calendar givenyear = Calendar.getInstance();
+        givenyear.setTime(startdate);
+        return givenyear.get(Calendar.MONTH);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ///   --------------------------------   base functions used for creating graphs     --------------------------------
 
 
 
@@ -812,6 +1145,62 @@ public class EnergyFragment extends Fragment {
 
         });
     }
+
+
+
+    /////      --------------------------------    function for spinners    --------------------------------
+
+    void setspinners(boolean monthlyspinneractive,boolean yearlyspinneractive)
+    {
+        monthselector.setVisibility((monthlyspinneractive)?View.VISIBLE:View.GONE);
+        yearselector.setVisibility((yearlyspinneractive)?View.VISIBLE:View.GONE);
+
+        String[] arrayofmonths = {"Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
+
+        Calendar calendar=Calendar.getInstance();
+        int currentyear = calendar.get(Calendar.YEAR);
+
+        ArrayList<String> listofyears = new ArrayList<>();
+
+        for(int i=2019;i<=currentyear;i++)
+        {
+            listofyears.add(""+i);
+        }
+
+        String[] arrayofyears = new String[listofyears.size()];
+
+        for (int i=0;i<listofyears.size();i++)
+        {
+            arrayofyears[i]=listofyears.get(i);
+        }
+
+        ArrayAdapter yearlyadapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,arrayofyears);
+        yearlyadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearselector.setAdapter(yearlyadapter);
+
+        ArrayAdapter monthlyadapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,arrayofmonths);
+        monthlyadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        monthselector.setAdapter(monthlyadapter);
+
+
+        if(monthlyspinneractive)
+        {
+            monthselector.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            monthselector.setVisibility(View.GONE);
+        }
+        if(yearlyspinneractive)
+        {
+            yearselector.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            yearselector.setVisibility(View.GONE);
+        }
+    }
+
 
 
 

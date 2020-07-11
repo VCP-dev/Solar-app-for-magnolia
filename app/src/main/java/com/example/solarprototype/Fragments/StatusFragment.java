@@ -30,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.solarprototype.BarChartOperations.frontpagedetails;
+import com.example.solarprototype.BarChartOperations.yearlydetails;
 import com.example.solarprototype.MainActivity;
 import com.example.solarprototype.RequestedValues.LifetimeValues;
 import com.example.solarprototype.RequestedValues.PostData;
@@ -52,6 +53,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -81,9 +83,15 @@ public class StatusFragment extends Fragment {
     TextView energyproducedlastmonth;
     TextView unitsperkwplastmonth;
 
-
     TextView energyproducedlifetime;
     TextView unitsperkwplifetime;
+
+    TextView energyproducedthisyear;
+    TextView unitsperkwpthisyear;
+
+    TextView energyproducedlastyear;
+    TextView unitsperkwplastyear;
+
 
     Button getdetails;
     Button changedate;
@@ -97,7 +105,7 @@ public class StatusFragment extends Fragment {
     String date;
 
 
-    String returnedvaluestatus,returnedenergyproducedlifetime,returnedunitsperkwplifetime,returnedvalueenergyproduced,returnedvalueunitsperkwp,returnedenergyproducedyesterday,returnedunitsperkwpyesterday,returnedenergyproducedthismonth,returnedunitsperkwpthismonth,returnedenergyproducedlastmonth,returnedunitsperkwplastmonth;
+    String returnedvaluestatus,returnedenergyproducedlastyear,returnedunitsperkwplastyear,returnedenergyproducedthisyear,returnedunitsperkwpthisyear,returnedenergyproducedlifetime,returnedunitsperkwplifetime,returnedvalueenergyproduced,returnedvalueunitsperkwp,returnedenergyproducedyesterday,returnedunitsperkwpyesterday,returnedenergyproducedthismonth,returnedunitsperkwpthismonth,returnedenergyproducedlastmonth,returnedunitsperkwplastmonth;
 
     Boolean valuespresent;
 
@@ -132,7 +140,7 @@ public class StatusFragment extends Fragment {
 
     }
 
-    public StatusFragment(String status,String energyproducedtoday,String unitsperkwptoday,String energyproducedyesterday,String unitsperkwpyesterday,String energyproducedthismonth,String unitsperkwpthismonth,String energyproducedlastmonth,String unitsperkwplastmonth,String energyproducedlifetime,String unitsperkwplifetime)
+    public StatusFragment(String status,String energyproducedtoday,String unitsperkwptoday,String energyproducedyesterday,String unitsperkwpyesterday,String energyproducedthismonth,String unitsperkwpthismonth,String energyproducedlastmonth,String unitsperkwplastmonth,String energyproducedlifetime,String unitsperkwplifetime,String energyproducedthisyear,String unitsperkwpthisyear,String energyproducedlastyear,String unitsperkwplastyear)
     {
         if(status!=null)
         {
@@ -179,7 +187,7 @@ public class StatusFragment extends Fragment {
             returnedunitsperkwplastmonth = unitsperkwplastmonth;
             valuespresent = true;
         }
-        if(energyproducedlifetime!=null)
+        if(energyproducedlifetime!=null)      //   lifetime
         {
             returnedenergyproducedlifetime = energyproducedlifetime;
             valuespresent = true;
@@ -188,6 +196,26 @@ public class StatusFragment extends Fragment {
         {
             returnedunitsperkwplifetime = unitsperkwplifetime;
             valuespresent=true;
+        }
+        if(energyproducedthisyear!=null)      //   this year
+        {
+            returnedenergyproducedthisyear = energyproducedthisyear;
+            valuespresent = true;
+        }
+        if(unitsperkwpthisyear!=null)
+        {
+            returnedunitsperkwpthisyear = unitsperkwpthisyear;
+            valuespresent = true;
+        }
+        if(energyproducedlastyear!=null)      //   last year
+        {
+            returnedenergyproducedlastyear = energyproducedlastyear;
+            valuespresent = true;
+        }
+        if(unitsperkwplastyear!=null)
+        {
+            returnedunitsperkwplastyear = unitsperkwplastyear;
+            valuespresent = true;
         }
         else
         {
@@ -225,7 +253,7 @@ public class StatusFragment extends Fragment {
             energyproduced.setTextSize(14);
             unitsperkwp.setTextSize(14);
             average_power_for_selected_day(getContext(),selectedDate);
-            getdata(getContext());
+            //getdata(getContext());
         }
     }
 
@@ -283,6 +311,12 @@ public class StatusFragment extends Fragment {
 
         energyproducedlifetime = v.findViewById(R.id.energyproducedlifetime);
         unitsperkwplifetime = v.findViewById(R.id.unitsperkwplifetime);
+
+        energyproducedthisyear = v.findViewById(R.id.energyproducedthisyear);
+        unitsperkwpthisyear = v.findViewById(R.id.unitsperkwpthisyear);
+
+        energyproducedlastyear = v.findViewById(R.id.energyproducedlastyear);
+        unitsperkwplastyear = v.findViewById(R.id.unitsperkwplastyear);
 
         //getdetails = v.findViewById(R.id.getbutton);
         //changedate = v.findViewById(R.id.datebutton);
@@ -348,10 +382,26 @@ public class StatusFragment extends Fragment {
             unitsperkwplastmonth.setTextColor(Color.parseColor("#000000"));
 
 
-            energyproducedlifetime.setText(returnedenergyproducedlastmonth);
+            energyproducedthisyear.setText(returnedenergyproducedthisyear);
+            energyproducedthisyear.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            energyproducedthisyear.setTextColor(Color.parseColor("#000000"));                ///    this year
+            unitsperkwpthisyear.setText(returnedunitsperkwpthisyear);
+            unitsperkwpthisyear.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            unitsperkwpthisyear.setTextColor(Color.parseColor("#000000"));
+
+
+            energyproducedlastyear.setText(returnedenergyproducedlastyear);
+            energyproducedlastyear.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            energyproducedlastyear.setTextColor(Color.parseColor("#000000"));                ///    last year
+            unitsperkwplastyear.setText(returnedunitsperkwplastyear);
+            unitsperkwplastyear.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            unitsperkwplastyear.setTextColor(Color.parseColor("#000000"));
+
+
+            energyproducedlifetime.setText(returnedenergyproducedlifetime);
             energyproducedlifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-            energyproducedlifetime.setTextColor(Color.parseColor("#000000"));               ///    for lifetime
-            unitsperkwplifetime.setText(returnedunitsperkwplastmonth);
+            energyproducedlifetime.setTextColor(Color.parseColor("#000000"));                ///    for lifetime
+            unitsperkwplifetime.setText(returnedunitsperkwplifetime);
             unitsperkwplifetime.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
             unitsperkwplifetime.setTextColor(Color.parseColor("#000000"));
 
@@ -405,6 +455,22 @@ public class StatusFragment extends Fragment {
                     unitsperkwplastmonth.setTextColor(oldColors);
                     energyproducedlastmonth.setTextSize(14);
                     unitsperkwplastmonth.setTextSize(14);
+
+
+                    energyproducedthisyear.setText("Retrieving details....");
+                    unitsperkwpthisyear.setText("Retrieving details....");
+                    energyproducedthisyear.setTextColor(oldColors);                         ///  this year
+                    unitsperkwpthisyear.setTextColor(oldColors);
+                    energyproducedthisyear.setTextSize(14);
+                    unitsperkwpthisyear.setTextSize(14);
+
+
+                    energyproducedlastyear.setText("Retrieving details....");
+                    unitsperkwplastyear.setText("Retrieving details....");
+                    energyproducedlastyear.setTextColor(oldColors);                         ///  last year
+                    unitsperkwplastyear.setTextColor(oldColors);
+                    energyproducedlastyear.setTextSize(14);
+                    unitsperkwplastyear.setTextSize(14);
 
 
                     energyproducedlifetime.setText("Retrieving details....");
@@ -530,6 +596,235 @@ public class StatusFragment extends Fragment {
                 Snackbar.make(getView(),"Error in receiving values please check internet connection",Snackbar.LENGTH_SHORT).setAction("Action",null).show();
             }
         });
+    }
+
+
+
+    public void getvaluesfortwoyears(final Context context)
+    {
+        int thisyear = Calendar.getInstance().get(Calendar.YEAR);
+        int lastyear = thisyear-1;
+
+        createrequestforyear(thisyear);
+        createrequestforyear(lastyear);
+
+    }
+
+
+    public void createrequestforyear(int year)
+    {
+        String startdate,endate;
+        if(year == Integer.parseInt(MainActivity.returnapivalue("system start year",getContext())))    ///    for starting year of system
+        {
+            startdate = MainActivity.returnapivalue("system start date",getContext());
+
+            ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+
+            endate = yeardates.get(yeardates.size()-2);
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+        }
+        else if(year==Calendar.getInstance().get(Calendar.YEAR))       ///      for current year
+        {
+            ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+            startdate = yeardates.get(0);
+            endate = returncurrentdate();
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+        }
+        else      ///     any other year
+        {
+            ArrayList<String> yeardates = yearlydetails.datesofyear(year);
+
+            startdate = yeardates.get(0);
+            endate = yeardates.get(yeardates.size()-2);
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+        }
+    }
+
+
+
+    public void getyearlyvalues(final Context context, final String startdate, final String enddate, final ArrayList<String> yeardates, final int year)
+    {
+
+        final Call<WeeklyValues> yearlyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
+
+
+        yearlyValues.enqueue(new Callback<WeeklyValues>() {
+            @Override
+            public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
+
+                if(response.body() instanceof WeeklyValues) {
+
+
+
+                    WeeklyValues values = response.body();
+
+                    float totalvalue = 0;
+
+                    List<Integer> valuesforgivenyear = values.getProduction();
+
+                    String[] arrayofmonths = {"Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
+
+                    ArrayList<String> months = converttoarrayliststring(arrayofmonths);
+
+                    ArrayList<Float> valuesforeachmonthinyear = converttoarraylistfloat(new float[]{0,0,0,0,0,0,0,0,0,0,0,0});
+
+                    float totalformonth=0;
+
+                    int i=0;
+
+                    int j=startingmonth(startdate);
+
+
+                    for (String date : yeardates)         // using yeardates separate the values obtained into each month dividing by ---
+                    {
+
+
+                        if (date == "---") {
+                            try {
+                                valuesforeachmonthinyear.set(j, totalformonth);
+
+                                j += 1;
+                                totalvalue += totalformonth;
+                                totalformonth = 0;
+                            } catch (Exception ex) {
+                                Log.println(Log.ASSERT, "value of j", "j=" + j);
+                            }
+                        } else {
+                            try {
+                                totalformonth += valuesforgivenyear.get(i) / 1000f;
+                            } catch (Exception ex) {
+                                Log.println(Log.ASSERT, "value of i", "i=" + i);
+                                Log.println(Log.ASSERT, "during adding values", ex.getMessage());
+                            }
+                            i += 1;
+                        }
+
+                    }
+
+
+                    if(year==Calendar.getInstance().get(Calendar.YEAR))
+                    {
+                        /// set for current year
+/*
+                        Integer tyk = totalvalue / 1000;
+                        Integer tyr = totalvalue % 1000;
+                        String thisyearvaluestring = tyk + "." + tyr;              ////   energy produced this year
+                        float thisyearavgvalue = totalvalue / 49.7f;
+                        int tyka = (int) thisyearavgvalue / 1000;
+                        int tyra = (int) thisyearavgvalue % 1000;
+                        String thismonthavgvaluestring = tyka + "." + tyra;         ////   units per kwp this year
+
+ */
+                        StoredValues.energyproducedthisyear = ""+totalvalue;
+                        StoredValues.unitsperkwpthisyear = ""+(totalvalue / 49.7f);
+
+
+                    }
+                    else if (year==Calendar.getInstance().get(Calendar.YEAR)-1 && StoredValues.energyproducedlastyear==null)
+                    {
+                        /// set for last year
+/*
+                        Integer lyk = totalvalue / 1000;
+                        Integer lyr = totalvalue % 1000;
+                        String lastyearvaluestring = lyk + "." + lyr;              ////   energy produced last year
+                        float lastyearavgvalue = totalvalue / 49.7f;
+                        int tyka = (int) lastyearavgvalue / 1000;
+                        int tyra = (int) lastyearavgvalue % 1000;
+                        String thismonthavgvaluestring = tyka + "." + tyra;         ////   units per kwp last year
+
+ */
+                        StoredValues.energyproducedlastyear =""+totalvalue;
+                        StoredValues.unitsperkwplastyear =""+(totalvalue / 49.7f);
+
+                    }
+
+
+                    energyproducedthisyear.setText(StoredValues.energyproducedthisyear);
+                    unitsperkwpthisyear.setText(StoredValues.unitsperkwpthisyear);
+                    energyproducedthisyear.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    energyproducedthisyear.setTextColor(Color.parseColor("#000000"));
+                    unitsperkwpthisyear.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    unitsperkwpthisyear.setTextColor(Color.parseColor("#000000"));
+
+
+
+                    energyproducedlastyear.setText(StoredValues.energyproducedlastyear);
+                    unitsperkwplastyear.setText(StoredValues.unitsperkwplastyear);
+                    energyproducedlastyear.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    energyproducedlastyear.setTextColor(Color.parseColor("#000000"));
+                    unitsperkwplastyear.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    unitsperkwplastyear.setTextColor(Color.parseColor("#000000"));
+
+
+
+                }
+                else{
+
+                    ///   this portion of code should technically never occur but just in case, to check if the object recieved isn't of the required type
+
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.noresponsedialog_design);
+
+                    TextView noresponsetext = dialog.findViewById(R.id.noresponsetext);
+                    noresponsetext.setText("Data recieved is not the right type.....");
+                    dialog.show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyValues> call, Throwable t) {
+                Toast.makeText(context,"Error occured, Could not get yearly values",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+    ArrayList<Float> converttoarraylistfloat(float arr[])
+    {
+        ArrayList<Float> array_list = new ArrayList<Float>();
+
+        for(int i=0;i<arr.length;i++)
+        {
+            array_list.add(arr[i]);
+        }
+
+        return array_list;
+    }
+
+
+    ArrayList<String> converttoarrayliststring(String arr[])
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        for(int i=0;i<arr.length;i++)
+        {
+            array_list.add(arr[i]);
+        }
+
+        return array_list;
+    }
+
+    int startingmonth(String startingdate)
+    {
+        Date startdate=null;
+        try {
+            startdate = new SimpleDateFormat("yyyy-MM-dd").parse(startingdate);
+        }
+        catch (Exception ex){
+
+        }
+        Calendar givenyear = Calendar.getInstance();
+        givenyear.setTime(startdate);
+        return givenyear.get(Calendar.MONTH);
     }
 
 
@@ -769,6 +1064,7 @@ public class StatusFragment extends Fragment {
         //getdata(context);
 
         getlifetimevalues(context);
+        getvaluesfortwoyears(context);
     }
 
 

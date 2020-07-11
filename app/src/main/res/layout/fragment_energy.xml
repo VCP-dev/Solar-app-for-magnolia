@@ -50,6 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <com.google.android.material.tabs.TabItem
+                android:text="year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <!--<com.google.android.material.tabs.TabItem
                 android:text="year"
                 android:layout_width="wrap_content"
@@ -87,9 +92,28 @@
 
         </com.github.mikephil.charting.charts.BarChart>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Spinner
+                android:layout_weight="1"
+                android:id="@+id/spinnermonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <Spinner
+                android:layout_weight="1"
+                android:id="@+id/spinneryear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/setweekbutton"
-            android:text="Select Desired Day"
+            android:text="Generate graph for Desired Day"
             android:textColor="#FFFFFF"
             android:layout_margin="22dp"
             android:background="@drawable/button_background"

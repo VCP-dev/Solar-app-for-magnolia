@@ -48,4 +48,12 @@ public class StoredValues {
 
     public static String unitsperkwplifetime = null;
 
+    public static String energyproducedthisyear = null;
+
+    public static String unitsperkwpthisyear = null;
+
+    public static String energyproducedlastyear = null;
+
+    public static String unitsperkwplastyear = null;
+
 }
