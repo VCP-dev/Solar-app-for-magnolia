@@ -103,6 +103,11 @@ public class EnergyFragment extends Fragment {
     float totalvalue;
 
 
+
+    int yeartocheckwith;
+
+
+
     public static final int EnergyREQUEST_CODE = 22;    ///  Used to identify the result
 
     private OnFragmentInteractionListener mListener;
@@ -250,8 +255,24 @@ public class EnergyFragment extends Fragment {
                 final String selectedValue=String.valueOf(e.getVal());
                 barselectedvalue.setText(selectedValue+" kWh");//barselectedvalue.setText("Power generated : "+selectedValue);
 
-                float avgvalue = Float.parseFloat(selectedValue)/49.7f;
-                Barselectedavgvalue.setText(""+avgvalue);//Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
+                float avgvalue;
+
+                switch (name){
+
+                    case "day":
+                    case "month":
+                        avgvalue = Float.parseFloat(selectedValue)/49.7f;
+                        Barselectedavgvalue.setText(""+avgvalue);//Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
+                        break;
+
+                    case "year":
+                        int numberofdays = numberofdaysofmonth(barChart.getXAxis().getValues().get(e.getXIndex()),yeartocheckwith);
+                        avgvalue = Float.parseFloat(selectedValue)/(49.7f*numberofdays);
+                        Barselectedavgvalue.setText(""+avgvalue);//Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
+                        break;
+                }
+             //   float avgvalue = Float.parseFloat(selectedValue)/49.7f;
+             //   Barselectedavgvalue.setText(""+avgvalue);//Barselectedavgvalue.setText("Units/kWP : "+avgvalue);
 
             }
 
@@ -381,6 +402,68 @@ public class EnergyFragment extends Fragment {
         return v;
 
     }
+
+
+
+    // for number of days of a month in a year
+    int numberofdaysofmonth(String monthNUM,int year){
+
+        int month = monthnum(monthNUM);
+        int date=1;
+        Calendar cal = Calendar.getInstance();
+        cal.set(year,month,date);
+
+        return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    int monthnum(String month)
+    {
+        int monthnum=0;
+        switch(month)
+        {
+            case "Jan":
+                monthnum = Calendar.JANUARY;
+                break;
+            case "Feb":
+                monthnum = Calendar.FEBRUARY;
+                break;
+            case "March":
+                monthnum = Calendar.MARCH;
+                break;
+            case "April":
+                monthnum = Calendar.APRIL;
+                break;
+            case "May":
+                monthnum = Calendar.MAY;
+                break;
+            case "June":
+                monthnum = Calendar.JUNE;
+                break;
+            case "July":
+                monthnum = Calendar.JULY;
+                break;
+            case "Aug":
+                monthnum = Calendar.AUGUST;
+                break;
+            case "Sep":
+                monthnum = Calendar.SEPTEMBER;
+                break;
+            case "Oct":
+                monthnum = Calendar.OCTOBER;
+                break;
+            case "Nov":
+                monthnum = Calendar.NOVEMBER;
+                break;
+            case "Dec":
+                monthnum = Calendar.DECEMBER;
+                break;
+        }
+        return monthnum;
+
+    }
+
+
+
 
     public String monthnumber(String month)
     {
@@ -752,6 +835,7 @@ public class EnergyFragment extends Fragment {
         else{
             enddate = selectedMonth.get(selectedMonth.size()-1);
         }
+
         getMonthlyValues(getContext(),description,startdate,enddate);
         //Toast.makeText(getContext(),"Bar graph created, Please tap the display if not visible",Toast.LENGTH_SHORT).show();
     }
@@ -844,6 +928,7 @@ public class EnergyFragment extends Fragment {
 
     public void createyearlygraph(String description,String startdate,String enddate,ArrayList<String> yeardates)
     {
+        yeartocheckwith = Integer.parseInt(yearselector.getSelectedItem().toString());
         barChart.clear();
         getyearlyvalues(getContext(),description,startdate,enddate,yeardates);
     }
@@ -906,7 +991,8 @@ public class EnergyFragment extends Fragment {
                                 } catch (Exception ex) {
                                     Log.println(Log.ASSERT, "value of j", "j=" + j);
                                 }
-                            } else {
+                            }
+                            else {
                                 try {
                                     totalformonth += valuesforgivenyear.get(i) / 1000f;
                                 } catch (Exception ex) {

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
@@ -51,6 +53,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -546,6 +550,7 @@ public class StatusFragment extends Fragment {
         final Call<LifetimeValues> lifetimeValues = SolarApi.getService().getLifetimeValues(MainActivity.returnapivalue("system_id",context),MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
 
         lifetimeValues.enqueue(new Callback<LifetimeValues>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<LifetimeValues> call, Response<LifetimeValues> response) {
                 LifetimeValues lifetimeValues = response.body();
@@ -561,10 +566,19 @@ public class StatusFragment extends Fragment {
                     totallifetimevalue+=Values.get(k);
                 }
 
+
+                /*
+                String systemstartdate = MainActivity.returnapivalue("system_start_date",getContext());
+                String todaysdate = returncurrentdate();
+                int numberofdays = numberofdaysbetweentwodates(systemstartdate,todaysdate);
+
+                 */
+                int numberofdays = Values.size();
+
                 Integer lk = totallifetimevalue / 1000;
                 Integer lr = totallifetimevalue % 1000;
                 String lifetimevaluestring = lk + "." + lr;              ////   energy produced during lifetime
-                float thismonthavgvalue = totallifetimevalue / 49.7f;
+                float thismonthavgvalue = totallifetimevalue / (49.7f*numberofdays/**numberofdays*/);
                 int tmka = (int) thismonthavgvalue / 1000;
                 int tmra = (int) thismonthavgvalue % 1000;
                 String lifetimeavgvaluestring = tmka + "." + tmra;         ////   units per kwp during lifetime
@@ -616,14 +630,14 @@ public class StatusFragment extends Fragment {
         String startdate,endate;
         if(year == Integer.parseInt(MainActivity.returnapivalue("system start year",getContext())))    ///    for starting year of system
         {
-            startdate = MainActivity.returnapivalue("system start date",getContext());
-
             ArrayList<String> yeardates = yearlydetails.datesofyear(year);
 
-
+            startdate = MainActivity.returnapivalue("system start date",getContext());
             endate = yeardates.get(yeardates.size()-2);
 
-            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+            int numberofdays = findnumberofdaysforyear(yeardates,startdate,endate);
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year,numberofdays);
         }
         else if(year==Calendar.getInstance().get(Calendar.YEAR))       ///      for current year
         {
@@ -632,7 +646,9 @@ public class StatusFragment extends Fragment {
             startdate = yeardates.get(0);
             endate = returncurrentdate();
 
-            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+            int numberofdays = findnumberofdaysforyear(yeardates,startdate,endate);
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year,numberofdays);
         }
         else      ///     any other year
         {
@@ -641,19 +657,41 @@ public class StatusFragment extends Fragment {
             startdate = yeardates.get(0);
             endate = yeardates.get(yeardates.size()-2);
 
-            getyearlyvalues(getContext(),startdate,endate,yeardates,year);
+            int numberofdays = findnumberofdaysforyear(yeardates,startdate,endate);
+
+            getyearlyvalues(getContext(),startdate,endate,yeardates,year,numberofdays);
         }
     }
 
 
+    int findnumberofdaysforyear(ArrayList<String> yeardates,String startdate,String enddate)
+    {
+        int startdateindex = yeardates.indexOf(startdate);
+        int endindex = yeardates.indexOf(enddate);
 
-    public void getyearlyvalues(final Context context, final String startdate, final String enddate, final ArrayList<String> yeardates, final int year)
+        int numberofdays = (endindex-startdateindex)+1;
+
+        for(int k=startdateindex;k<endindex;k++)
+        {
+            if(yeardates.get(k)=="---")
+            {
+                numberofdays-=1;
+            }
+        }
+
+        return numberofdays;
+    }
+
+
+
+    public void getyearlyvalues(final Context context, final String startdate, final String enddate, final ArrayList<String> yeardates, final int year, final int numberofdays)
     {
 
         final Call<WeeklyValues> yearlyValues = SolarApi.getService().getValuesofWeek(MainActivity.returnapivalue("system_id",context),startdate,enddate,MainActivity.returnapivalue("apikey",context),MainActivity.returnapivalue("user_id",context));
 
 
         yearlyValues.enqueue(new Callback<WeeklyValues>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<WeeklyValues> call, Response<WeeklyValues> response) {
 
@@ -706,6 +744,8 @@ public class StatusFragment extends Fragment {
 
                     }
 
+                    //int numberofdays = numberofdaysbetweentwodates(startdate,enddate);
+
 
                     if(year==Calendar.getInstance().get(Calendar.YEAR))
                     {
@@ -721,7 +761,7 @@ public class StatusFragment extends Fragment {
 
  */
                         StoredValues.energyproducedthisyear = ""+totalvalue;
-                        StoredValues.unitsperkwpthisyear = ""+(totalvalue / 49.7f);
+                        StoredValues.unitsperkwpthisyear = ""+(totalvalue / (49.7f*numberofdays/**numberofdays*/));
 
 
                     }
@@ -739,7 +779,7 @@ public class StatusFragment extends Fragment {
 
  */
                         StoredValues.energyproducedlastyear =""+totalvalue;
-                        StoredValues.unitsperkwplastyear =""+(totalvalue / 49.7f);
+                        StoredValues.unitsperkwplastyear =""+(totalvalue / (49.7f*numberofdays/**numberofdays*/));
 
                     }
 
@@ -842,13 +882,15 @@ public class StatusFragment extends Fragment {
                 if(response.body() instanceof WeeklyValues)
                 {
                     limitreached = false;
-                    float firstmonthsize = frontpagedetails.firstmonth.size();
+                    //float firstmonthsize = frontpagedetails.firstmonth.size();
+                    int firstmonthsize = frontpagedetails.firstmonth.size();
 
                     WeeklyValues ValuesTM = response.body();
 
                     List<Integer> ValuesofTwoMonths = ValuesTM.getProduction();
 
-                    float totalsizeoftwomonths = ValuesofTwoMonths.size();
+                    //float totalsizeoftwomonths = ValuesofTwoMonths.size();
+                    int totalsizeoftwomonths = ValuesofTwoMonths.size();
 
                     for (int j=0;j< ValuesofTwoMonths.size();j++) {
                         Log.println(Log.ASSERT,"j="+j,""+ValuesofTwoMonths.get(j));
@@ -881,7 +923,7 @@ public class StatusFragment extends Fragment {
                             Integer lmk = sumoflastmonth / 1000;
                             Integer lmr = sumoflastmonth % 1000;
                             String lastmonthvaluestring = lmk + "." + lmr;              ////  energy produced last month
-                            float lastmonthavgvalue = sumoflastmonth / 49.7f;
+                            float lastmonthavgvalue = sumoflastmonth / (49.7f*firstmonthsize);
                             int lmka = (int) lastmonthavgvalue / 1000;
                             int lmra = (int) lastmonthavgvalue % 1000;
                             String lastmonthavgvaluestring = lmka + "." + lmra;         ////   units per kwp last month
@@ -924,10 +966,13 @@ public class StatusFragment extends Fragment {
                         //   Log.println(Log.ASSERT, "Caught exception:", ex.getMessage().toString());
                         //    }
                         //}
+
+                        int secondmonthsize = totalsizeoftwomonths-firstmonthsize;
+
                         Integer tmk = sumofthismonth / 1000;
                         Integer tmr = sumofthismonth % 1000;
                         String thismonthvaluestring = tmk + "." + tmr;              ////   energy produced this month
-                        float thismonthavgvalue = sumofthismonth / 49.7f;
+                        float thismonthavgvalue = sumofthismonth / (49.7f*secondmonthsize);
                         int tmka = (int) thismonthavgvalue / 1000;
                         int tmra = (int) thismonthavgvalue % 1000;
                         String thismonthavgvaluestring = tmka + "." + tmra;         ////   units per kwp this month
@@ -1221,8 +1266,6 @@ public class StatusFragment extends Fragment {
             }
         });
     }
-
-
 
 
 
